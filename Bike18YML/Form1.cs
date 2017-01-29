@@ -49,9 +49,33 @@ namespace Bike18YML
 
             otv = request.getRequest("https://bike18.ru/");
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-            for(int r = 0; razdel.Count > r; r++)
+            MatchCollection categoryId = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
+
+            if(razdel.Count != categoryId.Count)
+            {
+                MessageBox.Show("Какой то косяк в разделах на главной странице");
+                return;
+            }
+
+            for (int r = 0; razdel.Count > r; r++)
             {
                 string urlRazdel = razdel[r].ToString();
+                otv = request.getRequest("https://bike18.ru/products/category/" + categoryId[r].ToString() + "/page/all");
+                MatchCollection razdel2 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
+                MatchCollection tovar2 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
+                if(tovar2.Count != 0)
+                {
+
+                }
+                else if(razdel2.Count != 0)
+                {
+
+                }
+                else
+                {
+
+                }
+
             }
 
         }
