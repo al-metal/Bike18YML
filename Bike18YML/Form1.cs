@@ -65,7 +65,7 @@ namespace Bike18YML
                 MatchCollection tovar2 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 if(tovar2.Count != 0)
                 {
-
+                    Tovar(cookie, tovar2);
                 }
                 else if(razdel2.Count != 0)
                 {
@@ -78,6 +78,41 @@ namespace Bike18YML
 
             }
 
+        }
+
+        private void Tovar(CookieContainer cookie, MatchCollection tovar)
+        {
+            for(int i = 0; tovar.Count > i; i++)
+            {
+                string urlTovar = tovar[i].ToString();
+                List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
+                string id = listTovar[0].ToString();
+                string available = "";
+                if (listTovar[43].ToString() == "0")
+                    available = "\"false\"";
+                else
+                    available = "\"true\"";
+                string marketCategory = "";//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+                string url = urlTovar;
+                string price = listTovar[9].ToString();
+                string currencyId = "RUR";
+                string categoryId = listTovar[2].ToString();
+                string picture = listTovar[32].ToString();
+                string name = listTovar[4].ToString();
+                string description = EditDescription(listTovar[7].ToString());
+                
+            }
+        }
+
+        private string EditDescription(string descript)
+        {
+            MatchCollection tags = new Regex("<.*?>").Matches(descript);
+            foreach(Match ss in tags)
+            {
+                descript = descript.Replace(ss.ToString(), "");
+            }
+            descript.Trim();
+            return descript;
         }
     }
 }
