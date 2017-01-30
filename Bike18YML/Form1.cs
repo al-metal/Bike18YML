@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Bike18YML
 {
@@ -17,6 +19,10 @@ namespace Bike18YML
     {
         nethouse nethouse = new nethouse();
         httpRequest request = new httpRequest();
+
+        XmlTextWriter textWritter = new XmlTextWriter("1.xml", Encoding.UTF8);
+        
+
         public Form1()
         {
             InitializeComponent();
@@ -36,6 +42,13 @@ namespace Bike18YML
             Properties.Settings.Default.passwordBike18= tbPassword.Text;
             Properties.Settings.Default.Save();
             #endregion
+
+            textWritter.WriteStartElement("head");
+            textWritter.WriteEndElement();
+            textWritter.Close();
+
+            XmlDocument document = new XmlDocument();
+            document.Load("1.xml");
 
             string otv = "";
 
@@ -65,7 +78,7 @@ namespace Bike18YML
                 MatchCollection tovar2 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
                 if(tovar2.Count != 0)
                 {
-                    Tovar(cookie, tovar2);
+                    Tovar(cookie, tovar2, document);
                 }
                 else if(razdel2.Count != 0)
                 {
@@ -75,16 +88,19 @@ namespace Bike18YML
                 {
 
                 }
+                document.Save("1.xml");
 
             }
 
         }
 
-        private void Tovar(CookieContainer cookie, MatchCollection tovar)
+        private void Tovar(CookieContainer cookie, MatchCollection tovar, XmlDocument document)
         {
             for(int i = 0; tovar.Count > i; i++)
             {
+                
                 string urlTovar = tovar[i].ToString();
+                
                 List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 string id = listTovar[0].ToString();
                 string available = "";
@@ -100,7 +116,47 @@ namespace Bike18YML
                 string picture = listTovar[32].ToString();
                 string name = listTovar[4].ToString();
                 string description = EditDescription(listTovar[7].ToString());
-                
+
+                XmlNode element = document.CreateElement("offer");
+                document.DocumentElement.AppendChild(element); // указываем родителя
+
+                XmlAttribute attribute = document.CreateAttribute("available"); // создаём атрибут
+                attribute.Value = available; // устанавливаем значение атрибута
+                element.Attributes.Append(attribute); // добавляем атрибут
+
+                attribute = document.CreateAttribute("id"); // создаём атрибут
+                attribute.Value = id; // устанавливаем значение атрибута
+                element.Attributes.Append(attribute); // добавляем атрибут
+                               
+
+                XmlNode subElement = document.CreateElement("url"); // даём имя
+                subElement.InnerText = url; // и значение
+                element.AppendChild(subElement); // и указываем кому принадлежит
+
+                subElement = document.CreateElement("price");
+                subElement.InnerText = price;
+                element.AppendChild(subElement);
+
+                subElement = document.CreateElement("currencyId");
+                subElement.InnerText = currencyId;
+                element.AppendChild(subElement);
+
+                subElement = document.CreateElement("categoryId");
+                subElement.InnerText = categoryId;
+                element.AppendChild(subElement);
+
+                subElement = document.CreateElement("picture");
+                subElement.InnerText = picture;
+                element.AppendChild(subElement);
+
+                subElement = document.CreateElement("name");
+                subElement.InnerText = name;
+                element.AppendChild(subElement);
+
+                subElement = document.CreateElement("description");
+                subElement.InnerText = description;
+                element.AppendChild(subElement);
+
             }
         }
 
