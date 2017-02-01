@@ -1,4 +1,5 @@
 ﻿using Bike18;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,7 +36,9 @@ namespace Bike18YML
             tbPassword.Text = Properties.Settings.Default.passwordBike18.ToString();
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
+
+        
+    private void btnStart_Click(object sender, EventArgs e)
         {
             #region pass/login
             Properties.Settings.Default.loginBike18 = tbLogin.Text;
@@ -108,7 +111,10 @@ namespace Bike18YML
                     available = "\"false\"";
                 else
                     available = "\"true\"";
-                string marketCategory = "";//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+                string marketCategory = listTovar[45].ToString();
+                string paramUnit = "";
+                string paramName = "";
+                string vendor = "";
                 string url = urlTovar;
                 string price = listTovar[9].ToString();
                 string currencyId = "RUR";
@@ -127,9 +133,17 @@ namespace Bike18YML
                 attribute = document.CreateAttribute("id"); // создаём атрибут
                 attribute.Value = id; // устанавливаем значение атрибута
                 element.Attributes.Append(attribute); // добавляем атрибут
-                               
 
-                XmlNode subElement = document.CreateElement("url"); // даём имя
+                XmlNode subElement;
+
+                if(marketCategory != "")
+                {
+                    subElement = document.CreateElement("market_category"); // даём имя
+                    subElement.InnerText = marketCategory; // и значение
+                    element.AppendChild(subElement); // и указываем кому принадлежит
+                }
+                
+                subElement = document.CreateElement("url"); // даём имя
                 subElement.InnerText = url; // и значение
                 element.AppendChild(subElement); // и указываем кому принадлежит
 

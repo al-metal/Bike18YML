@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -95,7 +96,21 @@ namespace Bike18
                 }
 
                 otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
+                
                 string slug = new Regex("(?<=\",\"slug\":\").*?(?=\")").Match(otv).ToString();
+                dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
+                string ssss = stuff1.ToString();
+
+                string groupeBranch = new Regex("(?<=productGroupBranch\":)[\\w\\W]*(?=\"name\":)").Match(ssss).ToString();
+                MatchCollection groupes = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Matches(groupeBranch);
+                string strGroupe = "";
+                foreach (Match s in groupes)
+                {
+                    strGroupe += s + "/";
+                }
+
+                if (strGroupe != "")
+                    strGroupe = strGroupe.Substring(0, strGroupe.Length - 1);
                 string markers = new Regex("(?<=],\"markers\":{).*?(?=})").Match(otv).ToString();
                 if (markers != "")
                     markers = new Regex("(?<=\").*?(?=\")").Match(markers).ToString();
@@ -239,6 +254,7 @@ namespace Bike18
                 listTovar.Add(alsoBuyStr);      //42
                 listTovar.Add(balance);         //43
                 listTovar.Add(parametrsTovar);  //44
+                listTovar.Add(strGroupe);       //45
             }
             return listTovar;
         }
