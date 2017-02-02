@@ -101,11 +101,27 @@ namespace Bike18YML
         {
             for(int i = 0; tovar.Count > i; i++)
             {
-                
+                string otv = "";
                 string urlTovar = tovar[i].ToString();
                 
                 List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 string id = listTovar[0].ToString();
+                string group = listTovar[3].ToString();
+                if(group == "")
+                    group = listTovar[46].ToString();
+
+                HttpWebResponse res = null;
+                HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/v1/catalog/attributes/" + group + "/" + group);
+                req.Accept = "application/json, text/plain, */*";
+                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+                req.Method = "GET";
+                req.CookieContainer = cookie;
+                res = (HttpWebResponse)req.GetResponse();
+                StreamReader ressr = new StreamReader(res.GetResponseStream());
+                otv = ressr.ReadToEnd();
+                res.Close();
+
+
                 string available = "";
                 if (listTovar[43].ToString() == "0")
                     available = "\"false\"";

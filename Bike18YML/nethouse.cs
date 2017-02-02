@@ -96,7 +96,7 @@ namespace Bike18
                 }
 
                 otv = webRequest.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/getproduct?id=" + productId);
-                
+                string customGroup = new Regex("(?<=productCustomGroup\":)[\\w\\W]*?(?=,\")").Match(otv).ToString();
                 string slug = new Regex("(?<=\",\"slug\":\").*?(?=\")").Match(otv).ToString();
                 dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
                 string ssss = stuff1.ToString();
@@ -255,6 +255,7 @@ namespace Bike18
                 listTovar.Add(balance);         //43
                 listTovar.Add(parametrsTovar);  //44
                 listTovar.Add(strGroupe);       //45
+                listTovar.Add(customGroup);     //46
             }
             return listTovar;
         }
