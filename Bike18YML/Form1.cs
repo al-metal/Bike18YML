@@ -103,7 +103,7 @@ namespace Bike18YML
             {
                 string otv = "";
                 string urlTovar = tovar[i].ToString();
-                
+
                 List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 string id = listTovar[0].ToString();
                 string group = listTovar[3].ToString();
@@ -121,7 +121,19 @@ namespace Bike18YML
                 otv = ressr.ReadToEnd();
                 res.Close();
 
+                dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
+                string ssss = stuff1.ToString();
 
+
+                string primaryKey = "";
+                string attributeId = "";
+                string empty = "";
+                string valueId = "";
+                string valueText = "";
+
+                MatchCollection attributes = new Regex("primaryKey[\\w\\W]*?(?=primaryKey)").Matches(ssss);
+                MatchCollection atributesTovar = new Regex("primaryKey.*?(?=primaryKey)").Matches(listTovar[40].ToString());
+                
                 string available = "";
                 if (listTovar[43].ToString() == "0")
                     available = "\"false\"";
@@ -138,6 +150,46 @@ namespace Bike18YML
                 string picture = listTovar[32].ToString();
                 string name = listTovar[4].ToString();
                 string description = EditDescription(listTovar[7].ToString());
+
+
+                foreach (Match s in atributesTovar)
+                {
+                    string strTovar = s.ToString();
+                    primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
+                    attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
+                    empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
+                    valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
+
+                    foreach (Match ss in attributes)
+                    {
+                        string str = ss.ToString();
+                        if (str.Contains(primaryKey))
+                        {
+                            bool b = false;
+                            if (str.Contains("vendor"))
+                            {
+                                b = true;
+                            }
+                            if (str.Contains("options"))
+                            {
+                                MatchCollection options = new Regex("valueId[\\w\\W]*?(?=valueId)").Matches(str);
+                                foreach (Match sss in options)
+                                {
+                                    string str2 = sss.ToString();
+                                    if (str2.Contains("11913160"))
+                                    {
+                                        valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
+                                        if (b)
+                                            vendor = valueText;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+
 
                 XmlNode element = document.CreateElement("offer");
                 document.DocumentElement.AppendChild(element); // указываем родителя
@@ -186,6 +238,13 @@ namespace Bike18YML
                 subElement = document.CreateElement("description");
                 subElement.InnerText = description;
                 element.AppendChild(subElement);
+
+                if(vendor != "")
+                {
+                    subElement = document.CreateElement("vendor");
+                    subElement.InnerText = vendor;
+                    element.AppendChild(subElement);
+                }
 
             }
         }
