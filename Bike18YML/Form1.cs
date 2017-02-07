@@ -103,7 +103,7 @@ namespace Bike18YML
             {
                 string otv = "";
                 string urlTovar = tovar[i].ToString();
-                //urlTovar = "https://bike18.ru/products/traktor-belarus-921";
+                urlTovar = "https://bike18.ru/products/traktor-belarus-921";
 
                 List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 string id = listTovar[0].ToString();
@@ -173,20 +173,18 @@ namespace Bike18YML
                     attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
                     empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
                     valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
-                    if (valueId == "")
+                    chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+
+                    if (chekbox != "")
                     {
-                        chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
-                        if(chekbox != "")
-                        {
-                            if (chekbox == "1")
-                                paramValue = "есть";
-                        }
+                        if (chekbox == "1")
+                            paramValue = "есть";
                     }
-                        
 
                     foreach (Match ss in attributes)
                     {
                         string str = ss.ToString();
+                        paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
                         if (str.Contains(primaryKey))
                         {
                             bool b = false;
@@ -196,10 +194,9 @@ namespace Bike18YML
                             }
                             if (str.Contains("options"))
                             {
-                                MatchCollection options = new Regex("valueId[\\w\\W]*?(?=valueId)").Matches(str);
+                                MatchCollection options = new Regex("valueId\": [\\w\\W]*?(?=})").Matches(str);
                                 if(options.Count == 0)
                                 {
-                                    paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
                                     param.Add(paramName + ";" + paramValue);
                                 }
                                 else
@@ -207,15 +204,19 @@ namespace Bike18YML
                                     foreach (Match sss in options)
                                     {
                                         string str2 = sss.ToString();
-                                        if (str2.Contains("11913160"))
+                                        if (str2.Contains(valueId))
                                         {
-                                            valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
                                             if (b)
                                             {
+                                                valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
                                                 vendor = valueText;
                                                 param.Add("vendor;" + valueText);
                                             }
-                                                
+                                            else
+                                            {
+                                                valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
+                                                param.Add(paramName + ";" + valueText);
+                                            }
                                         }
                                     }
                                 }
