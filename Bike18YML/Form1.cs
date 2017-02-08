@@ -156,6 +156,7 @@ namespace Bike18YML
                 string paramUnit = "";
                 string paramName = "";
                 string paramValue = "";
+                string unit = "";
                 string vendor = "";
                 string url = urlTovar;
                 string price = listTovar[9].ToString();
@@ -164,11 +165,15 @@ namespace Bike18YML
                 string picture = listTovar[32].ToString();
                 string name = listTovar[4].ToString();
                 string description = EditDescription(listTovar[7].ToString());
-
+                //35
                 List<string> param = new List<string>();
                 foreach (Match s in atributesTovar)
                 {
                     string strTovar = s.ToString();
+                    if (strTovar.Contains("4104"))
+                    {
+
+                    }
                     primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
                     attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
                     empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
@@ -180,11 +185,14 @@ namespace Bike18YML
                         if (chekbox == "1")
                             paramValue = "есть";
                     }
+                    else
+                        paramValue = new Regex("(?<=text]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
 
                     foreach (Match ss in attributes)
                     {
                         string str = ss.ToString();
                         paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
+                        unit = new Regex("(?<=unit\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
                         if (str.Contains(primaryKey))
                         {
                             bool b = false;
@@ -197,7 +205,10 @@ namespace Bike18YML
                                 MatchCollection options = new Regex("valueId\": [\\w\\W]*?(?=})").Matches(str);
                                 if(options.Count == 0)
                                 {
+                                    if(unit =="")
                                     param.Add(paramName + ";" + paramValue);
+                                    else
+                                        param.Add(paramName + ";" + paramValue + ";" + unit);
                                 }
                                 else
                                 {
@@ -293,8 +304,13 @@ namespace Bike18YML
                             string[] strParamProduct = str.Split(';');
                             string namesParamProduct = strParamProduct[0];
                             string valueParamProduct = strParamProduct[1];
+                            string unitParamProduct = "";
+                            if (strParamProduct.Length >2)
+                            unitParamProduct = strParamProduct[2];
 
                             XmlElement xE = document.CreateElement("param");
+                            if (unitParamProduct != "")
+                                xE.SetAttribute("unit", unitParamProduct);
                             xE.SetAttribute("name", namesParamProduct);
                             xE.InnerText = valueParamProduct;
                             element.AppendChild(xE);
