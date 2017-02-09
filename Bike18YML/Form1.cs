@@ -103,7 +103,7 @@ namespace Bike18YML
             {
                 string otv = "";
                 string urlTovar = tovar[i].ToString();
-                urlTovar = "https://bike18.ru/products/traktor-belarus-921";
+                //urlTovar = "https://bike18.ru/products/traktor-belarus-921";
 
                 List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 string id = listTovar[0].ToString();
@@ -145,7 +145,8 @@ namespace Bike18YML
                 string chekbox = "";
 
                 MatchCollection attributes = new Regex("primaryKey[\\w\\W]*?(?=primaryKey)").Matches(ssss);
-                MatchCollection atributesTovar = new Regex("primaryKey.*?(?=primaryKey)").Matches(listTovar[40].ToString());
+                string atributeTovar = listTovar[40].ToString() + "primaryKey";
+                MatchCollection atributesTovar = new Regex("primaryKey.*?(?=primaryKey)").Matches(atributeTovar);
                 
                 string available = "";
                 if (listTovar[43].ToString() == "0")
@@ -169,8 +170,8 @@ namespace Bike18YML
                 List<string> param = new List<string>();
                 foreach (Match s in atributesTovar)
                 {
-                    string strTovar = s.ToString();
-                    if (strTovar.Contains("4104"))
+                    string strTovar = s.ToString() + "&";
+                    if (strTovar.Contains("4113"))
                     {
 
                     }
@@ -179,6 +180,7 @@ namespace Bike18YML
                     empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
                     valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
                     chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+
 
                     if (chekbox != "")
                     {
@@ -308,12 +310,22 @@ namespace Bike18YML
                             if (strParamProduct.Length >2)
                             unitParamProduct = strParamProduct[2];
 
-                            XmlElement xE = document.CreateElement("param");
                             if (unitParamProduct != "")
+                            {
+                                XmlElement xE = document.CreateElement("param");
+                                xE.SetAttribute("name", namesParamProduct);
                                 xE.SetAttribute("unit", unitParamProduct);
-                            xE.SetAttribute("name", namesParamProduct);
-                            xE.InnerText = valueParamProduct;
-                            element.AppendChild(xE);
+                                xE.InnerText = valueParamProduct;
+                                element.AppendChild(xE);
+                            }
+                            else
+                            {
+                                XmlElement xE = document.CreateElement("param");
+                                xE.SetAttribute("name", namesParamProduct);
+                                xE.InnerText = valueParamProduct;
+                                element.AppendChild(xE);
+                            }
+                                
                             
 
                         }
