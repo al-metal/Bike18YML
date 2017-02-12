@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Bike18YML
 {
@@ -22,10 +23,7 @@ namespace Bike18YML
         int count = 0;
         nethouse nethouse = new nethouse();
         httpRequest request = new httpRequest();
-
-        XmlTextWriter textWritter = new XmlTextWriter("1.xml", Encoding.UTF8);
-
-
+        
         public Form1()
         {
             InitializeComponent();
@@ -51,24 +49,59 @@ namespace Bike18YML
             DateTime thisDate = DateTime.Now;
             string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
 
-            textWritter.WriteStartElement("yml_catalog");
-            textWritter.WriteAttributeString("date", date);
-            textWritter.WriteStartElement("shop");
-            textWritter.WriteEndElement();
-            textWritter.Close();           
+            XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "no"));
+            // создаем первый элемент
+            //XElement yml_catalog = new XElement("yml_catalog");
+            //XAttribute dateAtrb = new XAttribute("date", date);
+            // создаем атрибут
+            XAttribute iphoneNameAttr = new XAttribute("name", "iPhone 6");
+            XElement iphoneCompanyElem = new XElement("company", "Apple");
+            XElement iphonePriceElem = new XElement("price", "40000");
+            // добавляем атрибут и элементы в первый элемент
+            //yml_catalog.Add(iphoneNameAttr);
+            //yml_catalog.Add(iphoneCompanyElem);
+            //yml_catalog.Add(iphonePriceElem);
 
-            XmlDocument document = new XmlDocument();
-            document.Load("1.xml");
+            // создаем второй элемент
+            XElement galaxys5 = new XElement("phone");
+            XAttribute galaxysNameAttr = new XAttribute("name", "Samsung Galaxy S5");
+            XElement galaxysCompanyElem = new XElement("company", "Samsung");
+            XElement galaxysPriceElem = new XElement("price", "33000");
+            galaxys5.Add(galaxysNameAttr);
+            galaxys5.Add(galaxysCompanyElem);
+            galaxys5.Add(galaxysPriceElem);
+            // создаем корневой элемент
+            XElement yml_catalog = new XElement("yml_catalog");
+            XElement shop = new XElement("shop");
+            XElement name = new XElement("name","BIKE18.RU");
+            XElement company = new XElement("company", "BIKE18.RU");
+            XElement url = new XElement("url", "https://bike18.ru");
+            XElement currencies = new XElement("currencies");
+            XElement currencieRate = new XElement("currencie");
 
-            XmlNode element = document.CreateElement("name");
-            element.InnerText = "BIKE18.RU";
+            XAttribute dateAtrb = new XAttribute("date", date);
+            yml_catalog.Add(dateAtrb);
 
-            element = document.CreateElement("offer");
-            document.DocumentElement.AppendChild(element); // указываем родителя
+            XAttribute currencieAtrb = new XAttribute("rate", "1");
+            XAttribute idCurrencieAtrb = new XAttribute("id", "RUR");
+            currencieRate.Add(currencieAtrb);
+            currencieRate.Add(idCurrencieAtrb);
 
-            XmlAttribute attribute = document.CreateAttribute("available"); // создаём атрибут
-            attribute.Value = "true"; // устанавливаем значение атрибута
-            element.Attributes.Append(attribute); // добавляем атрибут
+
+              yml_catalog.Add(shop);
+            currencies.Add(currencieRate);
+
+            shop.Add(name);
+            shop.Add(company);
+            shop.Add(url);
+            shop.Add(currencies);
+            // добавляем в корневой элемент
+            //tehno.Add(yml_catalog);
+            //tehno.Add(galaxys5);
+            // добавляем корневой элемент в документ
+            xdoc.Add(yml_catalog);
+            //сохраняем документ
+            xdoc.Save("1.xml");
 
             string otv = "";
 
@@ -179,7 +212,6 @@ namespace Bike18YML
             //    }
             //}
             #endregion
-            document.Save("1.xml");
             MessageBox.Show(count.ToString());
         }
 
