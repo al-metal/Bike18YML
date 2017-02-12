@@ -70,18 +70,26 @@ namespace Bike18
         public string PostRequest(CookieContainer cookie, string nethouseTovar)
         {
             string otv = null;
-            HttpWebResponse res = null;
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(nethouseTovar);
-            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
-            req.Method = "POST";
-            req.Proxy = null;
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.CookieContainer = cookie;
-            res = (HttpWebResponse)req.GetResponse();
-            StreamReader ressr = new StreamReader(res.GetResponseStream());
-            otv = ressr.ReadToEnd();
-            res.Close();
+            try
+            {
+                HttpWebResponse res = null;
+                HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(nethouseTovar);
+                req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
+                req.Method = "POST";
+                req.Proxy = null;
+                req.ContentType = "application/x-www-form-urlencoded";
+                req.CookieContainer = cookie;
+                res = (HttpWebResponse)req.GetResponse();
+                StreamReader ressr = new StreamReader(res.GetResponseStream());
+                otv = ressr.ReadToEnd();
+                res.Close();
+            }
+            catch
+            {
+
+            }
+            
 
             return otv;
         }
