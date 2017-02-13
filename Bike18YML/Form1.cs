@@ -130,7 +130,9 @@ namespace Bike18YML
                 MatchCollection razdel2 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                 MatchCollection categoryId2 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                 MatchCollection tovar2 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                if (razdel2.Count != 0 && categoryId2.Count == razdel2.Count)
+                if (tovar2.Count != 0)
+                    Tovar(cookie, tovar2);
+                else
                 {
                     for (int i = 0; razdel2.Count > i; i++)
                     {
@@ -138,7 +140,9 @@ namespace Bike18YML
                         MatchCollection categoryId3 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                         MatchCollection razdel3 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
                         MatchCollection tovar3 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                        if (razdel3.Count != 0 && categoryId3.Count == razdel3.Count)
+                        if (tovar3.Count != 0)
+                            Tovar(cookie, tovar3);
+                        else
                         {
                             for (int i3 = 0; razdel3.Count > i3; i3++)
                             {
@@ -146,7 +150,9 @@ namespace Bike18YML
                                 MatchCollection categoryId4 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                                 MatchCollection razdel4 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
                                 MatchCollection tovar4 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                if (razdel4.Count != 0 && categoryId4.Count == razdel4.Count)
+                                if (tovar4.Count != 0)
+                                    Tovar(cookie, tovar4);
+                                else
                                 {
                                     for (int i4 = 0; razdel4.Count > i4; i4++)
                                     {
@@ -154,7 +160,9 @@ namespace Bike18YML
                                         MatchCollection categoryId5 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                                         MatchCollection razdel5 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
                                         MatchCollection tovar5 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                        if (razdel5.Count != 0 && categoryId5.Count == razdel5.Count)
+                                        if (tovar5.Count != 0)
+                                            Tovar(cookie, tovar5);
+                                        else
                                         {
                                             for (int i5 = 0; razdel5.Count > i5; i5++)
                                             {
@@ -162,7 +170,9 @@ namespace Bike18YML
                                                 MatchCollection categoryId6 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                                                 MatchCollection razdel6 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
                                                 MatchCollection tovar6 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                                if (razdel5.Count != 0 && categoryId6.Count == razdel6.Count)
+                                                if (tovar6.Count != 0)
+                                                    Tovar(cookie, tovar6);
+                                                else
                                                 {
                                                     for (int i6 = 0; razdel6.Count > i6; i6++)
                                                     {
@@ -170,43 +180,23 @@ namespace Bike18YML
                                                         MatchCollection categoryId7 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
                                                         MatchCollection razdel7 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
                                                         MatchCollection tovar7 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                                        if (razdel7.Count != 0 && categoryId7.Count == razdel7.Count)
+                                                        if (tovar7.Count != 0)
+                                                            Tovar(cookie, tovar7);
+                                                        else
                                                         {
 
                                                         }
-                                                        else
-                                                        {
-                                                            Tovar(cookie, tovar7);
-                                                        }
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    Tovar(cookie, tovar6);
+
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            Tovar(cookie, tovar5);
+
                                         }
                                     }
                                 }
-                                else
-                                {
-                                    Tovar(cookie, tovar4);
-                                }
                             }
                         }
-                        else
-                        {
-                            Tovar(cookie, tovar3);
-                        }
                     }
-                }
-                else
-                {
-                    Tovar(cookie, tovar2);
                 }
             }
             #endregion
