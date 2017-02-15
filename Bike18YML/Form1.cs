@@ -47,62 +47,6 @@ namespace Bike18YML
             Properties.Settings.Default.Save();
             #endregion
 
-            DateTime thisDate = DateTime.Now;
-            string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
-
-            XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "no"));
-            // создаем первый элемент
-            //XElement yml_catalog = new XElement("yml_catalog");
-            //XAttribute dateAtrb = new XAttribute("date", date);
-            // создаем атрибут
-            XAttribute iphoneNameAttr = new XAttribute("name", "iPhone 6");
-            XElement iphoneCompanyElem = new XElement("company", "Apple");
-            XElement iphonePriceElem = new XElement("price", "40000");
-            // добавляем атрибут и элементы в первый элемент
-            //yml_catalog.Add(iphoneNameAttr);
-            //yml_catalog.Add(iphoneCompanyElem);
-            //yml_catalog.Add(iphonePriceElem);
-
-            // создаем второй элемент
-            XElement galaxys5 = new XElement("phone");
-            XAttribute galaxysNameAttr = new XAttribute("name", "Samsung Galaxy S5");
-            XElement galaxysCompanyElem = new XElement("company", "Samsung");
-            XElement galaxysPriceElem = new XElement("price", "33000");
-            galaxys5.Add(galaxysNameAttr);
-            galaxys5.Add(galaxysCompanyElem);
-            galaxys5.Add(galaxysPriceElem);
-            // создаем корневой элемент
-            XElement yml_catalog = new XElement("yml_catalog");
-            XElement shop = new XElement("shop");
-            XElement name = new XElement("name", "BIKE18.RU");
-            XElement company = new XElement("company", "BIKE18.RU");
-            XElement url = new XElement("url", "https://bike18.ru");
-            XElement currencies = new XElement("currencies");
-            XElement currencieRate = new XElement("currencie");
-
-            XAttribute dateAtrb = new XAttribute("date", date);
-            yml_catalog.Add(dateAtrb);
-
-            XAttribute currencieAtrb = new XAttribute("rate", "1");
-            XAttribute idCurrencieAtrb = new XAttribute("id", "RUR");
-            currencieRate.Add(currencieAtrb);
-            currencieRate.Add(idCurrencieAtrb);
-
-
-            yml_catalog.Add(shop);
-            currencies.Add(currencieRate);
-
-            shop.Add(name);
-            shop.Add(company);
-            shop.Add(url);
-            shop.Add(currencies);
-            // добавляем в корневой элемент
-            //tehno.Add(yml_catalog);
-            //tehno.Add(galaxys5);
-            // добавляем корневой элемент в документ
-            xdoc.Add(yml_catalog);
-
-
             string otv = "";
 
             CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
@@ -200,9 +144,70 @@ namespace Bike18YML
                 }
             }
             #endregion
-            //сохраняем документ
-            xdoc.Save("1.xml");
+            CreateSaveYML(allTovars);
+            
             MessageBox.Show(count.ToString());
+        }
+
+        private void CreateSaveYML(List<List<string>> allTovars)
+        {
+            DateTime thisDate = DateTime.Now;
+            string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
+
+            XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "no"));
+            // создаем первый элемент
+            //XElement yml_catalog = new XElement("yml_catalog");
+            //XAttribute dateAtrb = new XAttribute("date", date);
+            // создаем атрибут
+            XAttribute iphoneNameAttr = new XAttribute("name", "iPhone 6");
+            XElement iphoneCompanyElem = new XElement("company", "Apple");
+            XElement iphonePriceElem = new XElement("price", "40000");
+            // добавляем атрибут и элементы в первый элемент
+            //yml_catalog.Add(iphoneNameAttr);
+            //yml_catalog.Add(iphoneCompanyElem);
+            //yml_catalog.Add(iphonePriceElem);
+
+            // создаем второй элемент
+            XElement galaxys5 = new XElement("phone");
+            XAttribute galaxysNameAttr = new XAttribute("name", "Samsung Galaxy S5");
+            XElement galaxysCompanyElem = new XElement("company", "Samsung");
+            XElement galaxysPriceElem = new XElement("price", "33000");
+            galaxys5.Add(galaxysNameAttr);
+            galaxys5.Add(galaxysCompanyElem);
+            galaxys5.Add(galaxysPriceElem);
+            // создаем корневой элемент
+            XElement yml_catalog = new XElement("yml_catalog");
+            XElement shop = new XElement("shop");
+            XElement name = new XElement("name", "BIKE18.RU");
+            XElement company = new XElement("company", "BIKE18.RU");
+            XElement url = new XElement("url", "https://bike18.ru");
+            XElement currencies = new XElement("currencies");
+            XElement currencieRate = new XElement("currencie");
+
+            XAttribute dateAtrb = new XAttribute("date", date);
+            yml_catalog.Add(dateAtrb);
+
+            XAttribute currencieAtrb = new XAttribute("rate", "1");
+            XAttribute idCurrencieAtrb = new XAttribute("id", "RUR");
+            currencieRate.Add(currencieAtrb);
+            currencieRate.Add(idCurrencieAtrb);
+
+
+            yml_catalog.Add(shop);
+            currencies.Add(currencieRate);
+
+            shop.Add(name);
+            shop.Add(company);
+            shop.Add(url);
+            shop.Add(currencies);
+            // добавляем в корневой элемент
+            //tehno.Add(yml_catalog);
+            //tehno.Add(galaxys5);
+            // добавляем корневой элемент в документ
+            xdoc.Add(yml_catalog);
+
+            //сохраняем документ
+            xdoc.Save("bike18.xml");//19013
         }
 
         private string ReturnUrlAllTovar(string url)
