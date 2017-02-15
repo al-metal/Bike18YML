@@ -31,6 +31,7 @@
             this.tbLogin = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
+            this.pb = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // tbLogin
@@ -58,11 +59,19 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
+            // pb
+            // 
+            this.pb.Location = new System.Drawing.Point(12, 38);
+            this.pb.Name = "pb";
+            this.pb.Size = new System.Drawing.Size(344, 23);
+            this.pb.TabIndex = 3;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(373, 333);
+            this.Controls.Add(this.pb);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.tbPassword);
             this.Controls.Add(this.tbLogin);
@@ -79,6 +88,7 @@
         private System.Windows.Forms.TextBox tbLogin;
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.ProgressBar pb;
     }
 }
 

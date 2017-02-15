@@ -64,12 +64,14 @@ namespace Bike18YML
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
+            pb.Maximum = q;
             for (int i = 2; q >= i; i++)
             {
                 string idTovar = w.Cells[i, 1].Value.ToString();
+                Tovar(cookie, idTovar);
             }
 
-                otv = request.getRequest("https://bike18.ru/");
+              /*  otv = request.getRequest("https://bike18.ru/");
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
             MatchCollection categoryId = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
 
@@ -77,7 +79,7 @@ namespace Bike18YML
             {
                 MessageBox.Show("Какой то косяк в разделах на главной странице");
                 return;
-            }
+            }*/
 
             #region Весь сайт
            /* for (int r = 0; razdel.Count > r; r++)
