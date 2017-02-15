@@ -1,5 +1,6 @@
 ﻿using Bike18;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,7 +58,18 @@ namespace Bike18YML
                 return;
             }
 
-            otv = request.getRequest("https://bike18.ru/");
+
+            FileInfo file = new FileInfo("catalog-14.02.2017_21-17-31.xlsx");
+            ExcelPackage p = new ExcelPackage(file);
+
+            ExcelWorksheet w = p.Workbook.Worksheets[1];
+            int q = w.Dimension.Rows;
+            for (int i = 2; q >= i; i++)
+            {
+                string idTovar = w.Cells[i, 1].Value.ToString();
+            }
+
+                otv = request.getRequest("https://bike18.ru/");
             MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
             MatchCollection categoryId = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
 
@@ -68,7 +80,7 @@ namespace Bike18YML
             }
 
             #region Весь сайт
-            for (int r = 0; razdel.Count > r; r++)
+           /* for (int r = 0; razdel.Count > r; r++)
             {
                 otv = request.getRequest("https://bike18.ru/products/category/" + categoryId[r].ToString() + "/page/all");
                 MatchCollection razdel2 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
@@ -142,7 +154,7 @@ namespace Bike18YML
                         }
                     }
                 }
-            }
+            }*/
             #endregion
             CreateSaveYML(allTovars);
             
@@ -220,16 +232,14 @@ namespace Bike18YML
             return urlAllTovar;
         }
 
-        private void Tovar(CookieContainer cookie, MatchCollection tovar)
+        private void Tovar(CookieContainer cookie, string idTovar)
         {
-            for (int i = 0; tovar.Count > i; i++)
-            {
                 string otv = "";
                 List<string> tovarAtribute = new List<string>();
-                string urlTovar = tovar[i].ToString();
-                //urlTovar = "https://bike18.ru/products/minitraktor-dt-15-plug-i-pochvofreza";
+                string urlTovar = "https://bike18.ru/products/" + idTovar;
+            //urlTovar = "https://bike18.ru/products/minitraktor-dt-15-plug-i-pochvofreza";
 
-                List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
+            List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 if (listTovar.Count != 0)
                 {
                     string id = listTovar[0].ToString();
@@ -446,8 +456,8 @@ namespace Bike18YML
                     }
                 }
                 allTovars.Add(tovarAtribute);
-                count++;
-            }
+
+            
 
         }
 
