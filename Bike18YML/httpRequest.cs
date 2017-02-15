@@ -87,7 +87,7 @@ namespace Bike18
             }
             catch
             {
-
+                otv = "err";
             }
             
 
