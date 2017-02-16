@@ -69,6 +69,7 @@ namespace Bike18YML
             {
                 string idTovar = w.Cells[i, 1].Value.ToString();
                 Tovar(cookie, idTovar);
+                pb.Value = i;
             }
 
               /*  otv = request.getRequest("https://bike18.ru/");
@@ -165,31 +166,12 @@ namespace Bike18YML
 
         private void CreateSaveYML(List<List<string>> allTovars)
         {
+            List<XElement> offersTovars = new List<XElement>();
             DateTime thisDate = DateTime.Now;
             string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
 
             XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "no"));
-            // создаем первый элемент
-            //XElement yml_catalog = new XElement("yml_catalog");
-            //XAttribute dateAtrb = new XAttribute("date", date);
-            // создаем атрибут
-            XAttribute iphoneNameAttr = new XAttribute("name", "iPhone 6");
-            XElement iphoneCompanyElem = new XElement("company", "Apple");
-            XElement iphonePriceElem = new XElement("price", "40000");
-            // добавляем атрибут и элементы в первый элемент
-            //yml_catalog.Add(iphoneNameAttr);
-            //yml_catalog.Add(iphoneCompanyElem);
-            //yml_catalog.Add(iphonePriceElem);
 
-            // создаем второй элемент
-            XElement galaxys5 = new XElement("phone");
-            XAttribute galaxysNameAttr = new XAttribute("name", "Samsung Galaxy S5");
-            XElement galaxysCompanyElem = new XElement("company", "Samsung");
-            XElement galaxysPriceElem = new XElement("price", "33000");
-            galaxys5.Add(galaxysNameAttr);
-            galaxys5.Add(galaxysCompanyElem);
-            galaxys5.Add(galaxysPriceElem);
-            // создаем корневой элемент
             XElement yml_catalog = new XElement("yml_catalog");
             XElement shop = new XElement("shop");
             XElement name = new XElement("name", "BIKE18.RU");
@@ -197,31 +179,155 @@ namespace Bike18YML
             XElement url = new XElement("url", "https://bike18.ru");
             XElement currencies = new XElement("currencies");
             XElement currencieRate = new XElement("currencie");
+            XElement categories = new XElement("categories");
+            XElement offers = new XElement("offers");
 
             XAttribute dateAtrb = new XAttribute("date", date);
             yml_catalog.Add(dateAtrb);
 
             XAttribute currencieAtrb = new XAttribute("rate", "1");
             XAttribute idCurrencieAtrb = new XAttribute("id", "RUR");
-            currencieRate.Add(currencieAtrb);
-            currencieRate.Add(idCurrencieAtrb);
 
+            currencieRate.Add(idCurrencieAtrb);
+            currencieRate.Add(currencieAtrb);
 
             yml_catalog.Add(shop);
             currencies.Add(currencieRate);
+            for (int i = 0; allTovars.Count > i; i++)
+            {
+                List<string> tovar = allTovars[i];
+                XElement offer = new XElement("param", i);
+                XAttribute idProd = null;// = new XAttribute("id", "");
+                XAttribute available = null;// = new XAttribute("available", "");
+                XElement urlTovar = null;// = new XElement("offer");
+                XElement market_category = null;
+                XElement priceTovar = null;// = new XElement("offer");
+                XElement currencyIdTovar = null;// = new XElement("offer");
+                XElement categoryIdTovar = null;// = new XElement("offer");
+                XElement pictureTovar = null;// = new XElement("offer");
+                XElement nameTovar = null;// = new XElement("offer");
+                XElement descriptionTovar = null;// = new XElement("offer");
+                XElement vendorTovar = null;// = new XElement("offer");
+                XElement param = new XElement("param", i);
+                XAttribute paramName = null;//new XAttribute("name", i);
+                XAttribute paramUnit = null;//new XAttribute("name", i);
+                List<XElement> paramList2 = new List<XElement>();
+                for (int t = 0; tovar.Count > t; t++)
+                {
+                    string str = tovar[t].ToString();
+                    string[] arrayStr = str.Split(';');
+                    if (arrayStr.Length == 1 || str.Contains("description-"))
+                    {
+                        string[] category = arrayStr[0].ToString().Split('-');
+                        if (category[0].ToString().Contains("market_category"))
+                        {
+                            market_category = new XElement("market_category", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("url"))
+                        {
+                            urlTovar = new XElement("url", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("price"))
+                        {
+                            priceTovar = new XElement("price", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("currencyId"))
+                        {
+                            currencyIdTovar = new XElement("currencyId", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("categoryId"))
+                        {
+                            categoryIdTovar = new XElement("categoryId", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("picture"))
+                        {
+                            pictureTovar = new XElement("picture", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("name"))
+                        {
+                            nameTovar = new XElement("name", category[1].ToString());
+                        }
+                        else if (category[0].ToString().Contains("description"))
+                        {
+                            str = str.Replace("description-", "");
+                            descriptionTovar = new XElement("description", str);
+                        }
+                        else if (category[0].ToString().Contains("vendor"))
+                        {
+                            vendorTovar = new XElement("vendor", category[1].ToString());
+                        }
+                    }
+                    else
+                    {
+                        if (arrayStr[0].ToString().Contains("offer"))
+                        {
+                            offer = new XElement("offer");
+                            string[] arrayID = arrayStr[1].ToString().Split('-');
+                            string[] arrayAvailable = arrayStr[2].ToString().Split('-');
+                            idProd = new XAttribute("id", arrayID[1].ToString());
+                            available = new XAttribute("available", arrayAvailable[1].ToString().Replace("\"", ""));
+                            offer.Add(idProd);
+                            offer.Add(available);
+                        }
+                        else if (arrayStr[0].ToString().Contains("param"))
+                        {
+                            string[] arrayParam = arrayStr[1].ToString().Split('-');
+                            if (arrayStr.Length == 3)
+                            {
+                                param = new XElement("param", arrayStr[2].ToString());
+                                paramName = new XAttribute("name", arrayParam[1].ToString());
+                                param.Add(paramName);
+                                paramList2.Add(param);
+                            }
+                            else
+                            {
+                                string[] arrayUnit = arrayStr[2].ToString().Split('-');
+                                param = new XElement("param", arrayStr[3].ToString());
+                                paramName = new XAttribute("name", arrayParam[1].ToString());
+                                paramUnit = new XAttribute("unit", arrayUnit[1].ToString());
+                                param.Add(paramUnit);
+                                param.Add(paramName);
+                                paramList2.Add(param);
+                            }
+                        }
+                    }
+                }
+                offer.Add(market_category);
+                offer.Add(urlTovar);
+                offer.Add(priceTovar);
+                offer.Add(currencyIdTovar);
+                offer.Add(categoryIdTovar);
+                offer.Add(pictureTovar);
+                offer.Add(nameTovar);
+                offer.Add(descriptionTovar);
+                if (vendorTovar != null)
+                    offer.Add(vendorTovar);
+                if (paramList2.Count != 0)
+                {
+                    foreach (XElement element in paramList2)
+                    {
+                        offer.Add(element);
+                    }
+                }
+                offersTovars.Add(offer);
+            }
+
+            foreach (XElement element in offersTovars)
+            {
+                offers.Add(element);
+            }
 
             shop.Add(name);
             shop.Add(company);
             shop.Add(url);
             shop.Add(currencies);
-            // добавляем в корневой элемент
-            //tehno.Add(yml_catalog);
-            //tehno.Add(galaxys5);
-            // добавляем корневой элемент в документ
+            shop.Add(categories);
+            shop.Add(offers);
+
             xdoc.Add(yml_catalog);
 
             //сохраняем документ
-            xdoc.Save("bike18.xml");//19013
+            xdoc.Save("bike18.xml");
         }
 
         private string ReturnUrlAllTovar(string url)
@@ -239,7 +345,6 @@ namespace Bike18YML
                 string otv = "";
                 List<string> tovarAtribute = new List<string>();
                 string urlTovar = "https://bike18.ru/products/" + idTovar;
-            //urlTovar = "https://bike18.ru/products/minitraktor-dt-15-plug-i-pochvofreza";
 
             List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
                 if (listTovar.Count != 0)
@@ -315,10 +420,7 @@ namespace Bike18YML
                         foreach (Match s in atributesTovar)
                         {
                             string strTovar = s.ToString() + "&";
-                            if (strTovar.Contains("4113"))
-                            {
 
-                            }
                             primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
                             attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
                             empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
