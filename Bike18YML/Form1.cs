@@ -48,8 +48,6 @@ namespace Bike18YML
             Properties.Settings.Default.Save();
             #endregion
 
-            string otv = "";
-
             CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             if (cookie.Count != 4)
@@ -57,7 +55,6 @@ namespace Bike18YML
                 MessageBox.Show("Введены не верные пароли!");
                 return;
             }
-
 
             FileInfo file = new FileInfo("catalog-14.02.2017_21-17-31.xlsx");
             ExcelPackage p = new ExcelPackage(file);
@@ -72,93 +69,6 @@ namespace Bike18YML
                 pb.Value = i;
             }
 
-              /*  otv = request.getRequest("https://bike18.ru/");
-            MatchCollection razdel = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-            MatchCollection categoryId = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-
-            if (razdel.Count != categoryId.Count)
-            {
-                MessageBox.Show("Какой то косяк в разделах на главной странице");
-                return;
-            }*/
-
-            #region Весь сайт
-           /* for (int r = 0; razdel.Count > r; r++)
-            {
-                otv = request.getRequest("https://bike18.ru/products/category/" + categoryId[r].ToString() + "/page/all");
-                MatchCollection razdel2 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                MatchCollection categoryId2 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                MatchCollection tovar2 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                if (tovar2.Count != 0)
-                    Tovar(cookie, tovar2);
-                else
-                {
-                    for (int i = 0; razdel2.Count > i; i++)
-                    {
-                        otv = request.getRequest("https://bike18.ru/products/category/" + razdel2[i].ToString() + "/page/all");
-                        MatchCollection categoryId3 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                        MatchCollection razdel3 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-                        MatchCollection tovar3 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                        if (tovar3.Count != 0)
-                            Tovar(cookie, tovar3);
-                        else
-                        {
-                            for (int i3 = 0; razdel3.Count > i3; i3++)
-                            {
-                                otv = request.getRequest("https://bike18.ru/products/category/" + categoryId3[i3].ToString() + "/page/all");
-                                MatchCollection categoryId4 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                                MatchCollection razdel4 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-                                MatchCollection tovar4 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                if (tovar4.Count != 0)
-                                    Tovar(cookie, tovar4);
-                                else
-                                {
-                                    for (int i4 = 0; razdel4.Count > i4; i4++)
-                                    {
-                                        otv = request.getRequest("https://bike18.ru/products/category/" + categoryId4[i4].ToString() + "/page/all");
-                                        MatchCollection categoryId5 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                                        MatchCollection razdel5 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-                                        MatchCollection tovar5 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                        if (tovar5.Count != 0)
-                                            Tovar(cookie, tovar5);
-                                        else
-                                        {
-                                            for (int i5 = 0; razdel5.Count > i5; i5++)
-                                            {
-                                                otv = request.getRequest("https://bike18.ru/products/category/" + categoryId5[i5].ToString() + "/page/all");
-                                                MatchCollection categoryId6 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                                                MatchCollection razdel6 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-                                                MatchCollection tovar6 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                                if (tovar6.Count != 0)
-                                                    Tovar(cookie, tovar6);
-                                                else
-                                                {
-                                                    for (int i6 = 0; razdel6.Count > i6; i6++)
-                                                    {
-                                                        otv = request.getRequest("https://bike18.ru/products/category/" + categoryId6[i6].ToString() + "/page/all");
-                                                        MatchCollection categoryId7 = new Regex("(?<=id=\"item).*?(?=\">)").Matches(otv);
-                                                        MatchCollection razdel7 = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*(?=\" class=\"blue\">)").Matches(otv);
-                                                        MatchCollection tovar7 = new Regex("(?<=-text-center\"><a href=\").*?(?=\" >)").Matches(otv);
-                                                        if (tovar7.Count != 0)
-                                                            Tovar(cookie, tovar7);
-                                                        else
-                                                        {
-
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }*/
-            #endregion
             CreateSaveYML(allTovars);
             
             MessageBox.Show(count.ToString());
@@ -197,20 +107,20 @@ namespace Bike18YML
             {
                 List<string> tovar = allTovars[i];
                 XElement offer = new XElement("param", i);
-                XAttribute idProd = null;// = new XAttribute("id", "");
-                XAttribute available = null;// = new XAttribute("available", "");
-                XElement urlTovar = null;// = new XElement("offer");
+                XAttribute idProd = null;
+                XAttribute available = null;
+                XElement urlTovar = null;
                 XElement market_category = null;
-                XElement priceTovar = null;// = new XElement("offer");
-                XElement currencyIdTovar = null;// = new XElement("offer");
-                XElement categoryIdTovar = null;// = new XElement("offer");
-                XElement pictureTovar = null;// = new XElement("offer");
-                XElement nameTovar = null;// = new XElement("offer");
-                XElement descriptionTovar = null;// = new XElement("offer");
-                XElement vendorTovar = null;// = new XElement("offer");
+                XElement priceTovar = null;
+                XElement currencyIdTovar = null;
+                XElement categoryIdTovar = null;
+                XElement pictureTovar = null;
+                XElement nameTovar = null;
+                XElement descriptionTovar = null;
+                XElement vendorTovar = null;
                 XElement param = new XElement("param", i);
-                XAttribute paramName = null;//new XAttribute("name", i);
-                XAttribute paramUnit = null;//new XAttribute("name", i);
+                XAttribute paramName = null;
+                XAttribute paramUnit = null;
                 List<XElement> paramList2 = new List<XElement>();
                 for (int t = 0; tovar.Count > t; t++)
                 {
@@ -400,8 +310,6 @@ namespace Bike18YML
                         otv = ressr.ReadToEnd();
                         res.Close();
 
-
-
                         dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
                         string ssss = stuff1.ToString();
 
@@ -426,7 +334,6 @@ namespace Bike18YML
                             empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
                             valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
                             chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
-
 
                             if (chekbox != "")
                             {
@@ -486,9 +393,6 @@ namespace Bike18YML
                     }
 
 
-
-                    //XmlNode element = document.CreateElement("offer");
-                    //document.DocumentElement.AppendChild(element); // указываем родителя
                     tovarAtribute.Add("offer;id" + "-" + id + ";available" + "-" + available);
                     if (marketCategory != "")
                         tovarAtribute.Add("market_category-" + marketCategory);
@@ -502,10 +406,8 @@ namespace Bike18YML
                     if (vendor != "")
                         tovarAtribute.Add("vendor-" + vendor);
 
-
                     if (param.Count > 0)
                     {
-
                         foreach (string s in param)
                         {
                             string str = s;
@@ -526,43 +428,16 @@ namespace Bike18YML
                                 if (unitParamProduct != "")
                                 {
                                     tovarAtribute.Add("param;" + "unit-" + unitParamProduct + ";name-" + namesParamProduct + ";" + valueParamProduct);
-                                    //    XmlElement xE = document.CreateElement("param");
-                                    //xE.SetAttribute("name", namesParamProduct);
-                                    //xE.SetAttribute("unit", unitParamProduct);
-                                    //xE.InnerText = valueParamProduct;
-                                    //element.AppendChild(xE);
                                 }
                                 else
                                 {
                                     tovarAtribute.Add("param;" + "name-" + namesParamProduct + ";" + valueParamProduct);
-                                    //    XmlElement xE = document.CreateElement("param");
-                                    //xE.SetAttribute("name", namesParamProduct);
-                                    //xE.InnerText = valueParamProduct;
-                                    //element.AppendChild(xE);
                                 }
-
-
-
                             }
                         }
-
-                        //XmlAttribute attribute = document.CreateAttribute("available"); // создаём атрибут
-                        //attribute.Value = available; // устанавливаем значение атрибута
-                        //element.Attributes.Append(attribute); // добавляем атрибут
-
-                        //subElement = document.CreateElement("param");
-                        //subElement.InnerText = vendor;
-                        //element.AppendChild(subElement);
-
-                        //attribute = subElement.Attributes.Append(document.CreateAttribute("name", paramName)); // создаём атрибут
-                        //attribute.Value = paramValue; // устанавливаем значение атрибута
-                        //element.Attributes.Append(attribute); // добавляем атрибут
                     }
                 }
                 allTovars.Add(tovarAtribute);
-
-            
-
         }
 
         private string EditDescription(string descript)
