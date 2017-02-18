@@ -81,7 +81,7 @@ namespace Bike18YML
             string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
 
             XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "no"));
-
+            XDocumentType doctype = new XDocumentType("yml_catalog", null, "shops.dtd", null);
             XElement yml_catalog = new XElement("yml_catalog");
             XElement shop = new XElement("shop");
             XElement name = new XElement("name", "BIKE18.RU");
@@ -236,6 +236,7 @@ namespace Bike18YML
             shop.Add(offers);
 
             xdoc.Add(yml_catalog);
+            xdoc.Add(doctype);
 
             //сохраняем документ
             xdoc.Save("bike18.xml");
