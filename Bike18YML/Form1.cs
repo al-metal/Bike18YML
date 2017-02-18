@@ -174,6 +174,7 @@ namespace Bike18YML
                             offer = new XElement("offer");
                             string[] arrayID = arrayStr[1].ToString().Split('-');
                             string[] arrayAvailable = arrayStr[2].ToString().Split('-');
+
                             idProd = new XAttribute("id", arrayID[1].ToString());
                             available = new XAttribute("available", arrayAvailable[1].ToString().Replace("\"", ""));
                             offer.Add(idProd);
@@ -348,6 +349,8 @@ namespace Bike18YML
                                 string str = ss.ToString();
                                 paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
                                 unit = new Regex("(?<=unit\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
+                            if (unit == "\\")
+                                unit = "\"";
                                 if (str.Contains(primaryKey))
                                 {
                                     bool b = false;
