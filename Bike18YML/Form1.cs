@@ -25,6 +25,8 @@ namespace Bike18YML
         nethouse nethouse = new nethouse();
         httpRequest request = new httpRequest();
         List<List<string>> allTovars = new List<List<string>>();
+        List<XElement> categories = new List<XElement>();
+        XElement categoriesElement = new XElement("categories");
 
         public Form1()
         {
@@ -62,7 +64,7 @@ namespace Bike18YML
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
             pb.Maximum = q;
-            for (int i = 2; q >= i; i++)
+            for (int i = 2; 10 >= i; i++)
             {
                 string idTovar = w.Cells[i, 1].Value.ToString();
                 Tovar(cookie, idTovar);
@@ -80,16 +82,18 @@ namespace Bike18YML
             DateTime thisDate = DateTime.Now;
             string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
 
-            XDocument xdoc = new XDocument(new XDeclaration("1.0", "utf-8", "no"));
+            XDeclaration xDeclaration = new XDeclaration("1.0", "UTF-8", "no");
+            XDocument xdoc = new XDocument(new XDocumentType("yml_catalog", null, "shops.dtd", null));
+            xdoc.Declaration = xDeclaration;
             XDocumentType doctype = new XDocumentType("yml_catalog", null, "shops.dtd", null);
             XElement yml_catalog = new XElement("yml_catalog");
             XElement shop = new XElement("shop");
+            XElement categoriesElement = new XElement("categories");
             XElement name = new XElement("name", "BIKE18.RU");
             XElement company = new XElement("company", "BIKE18.RU");
             XElement url = new XElement("url", "https://bike18.ru");
             XElement currencies = new XElement("currencies");
-            XElement currencieRate = new XElement("currencie");
-            XElement categories = new XElement("categories");
+            XElement currencieRate = new XElement("currency");
             XElement offers = new XElement("offers");
 
             XAttribute dateAtrb = new XAttribute("date", date);
@@ -232,11 +236,14 @@ namespace Bike18YML
             shop.Add(company);
             shop.Add(url);
             shop.Add(currencies);
-            shop.Add(categories);
+            foreach(XElement element in categories)
+            {
+                categoriesElement.Add(element);
+            }
+            shop.Add(categoriesElement);
             shop.Add(offers);
 
             xdoc.Add(yml_catalog);
-            xdoc.Add(doctype);
 
             //сохраняем документ
             xdoc.Save("bike18.xml");
@@ -311,6 +318,10 @@ namespace Bike18YML
                         StreamReader ressr = new StreamReader(res.GetResponseStream());
                         otv = ressr.ReadToEnd();
                         res.Close();
+                    if(categories.Count == 0)
+                    {
+                        ReturnCategories(cookie);
+                    }
 
                         dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
                         string ssss = stuff1.ToString();
@@ -442,6 +453,53 @@ namespace Bike18YML
                     }
                 }
                 allTovars.Add(tovarAtribute);
+        }
+
+        private void ReturnCategories(CookieContainer cookie)
+        {
+            string otv = "";
+            HttpWebResponse res = null;
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/categoriesselect");
+            req.Accept = "application/json, text/plain, */*";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+            req.Method = "GET";
+            req.CookieContainer = cookie;
+            res = (HttpWebResponse)req.GetResponse();
+            StreamReader ressr = new StreamReader(res.GetResponseStream());
+            otv = ressr.ReadToEnd();
+            res.Close();
+
+            dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
+            string ssss = stuff1.ToString();
+            List<string> arrayCategorie = new List<string>();
+            MatchCollection arrayCategories = new Regex("(?<=\"id\")[\\w\\W]*?(?=\"desc\":)").Matches(ssss);
+            foreach(Match str in arrayCategories)
+            {
+                string id = null;
+                string categoryId = null;
+                string name = null;
+                if (!str.ToString().Contains("productCount"))
+                {
+                    id = new Regex("(?<=: ).*?(?=,)").Match(str.ToString()).ToString().Trim();
+                    categoryId = new Regex("(?<=categoryId\":).*?(?=,)").Match(str.ToString()).ToString().Trim();
+                    name = new Regex("(?<=name\": \").*?(?=\",)").Match(str.ToString()).ToString().Trim();
+                    if(categoryId == "0")
+                    {
+                        categoriesElement = new XElement("category", name);
+                        XAttribute atribId = new XAttribute("id", id);
+                        categoriesElement.Add(atribId);
+                    }
+                    else
+                    {
+                        categoriesElement = new XElement("category", name);
+                        XAttribute atribCategoryId = new XAttribute("parentId", categoryId);
+                        XAttribute atribId = new XAttribute("id", id);
+                        categoriesElement.Add(atribId);
+                        categoriesElement.Add(atribCategoryId);
+                    }
+                    categories.Add(categoriesElement);
+                }
+            }
         }
 
         private string EditDescription(string descript)
