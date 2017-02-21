@@ -33,15 +33,12 @@ namespace Bike18YML
             InitializeComponent();
         }
 
-
         private void Form1_Load(object sender, EventArgs e)
         {
             tbLogin.Text = Properties.Settings.Default.loginBike18.ToString();
             tbPassword.Text = Properties.Settings.Default.passwordBike18.ToString();
         }
-
-
-
+        
         private void btnStart_Click(object sender, EventArgs e)
         {
             #region pass/login
@@ -64,7 +61,7 @@ namespace Bike18YML
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
             pb.Maximum = q;
-            for (int i = 2; 10 >= i; i++)
+            for (int i = 2; q >= i; i++)
             {
                 string idTovar = w.Cells[i, 1].Value.ToString();
                 Tovar(cookie, idTovar);
@@ -270,7 +267,8 @@ namespace Bike18YML
             {
                 string id = listTovar[0].ToString();
                 string group = listTovar[3].ToString();
-
+                if(listTovar[1].ToString() != "")
+                    urlTovar = "https://bike18.ru/products/" + listTovar[1].ToString();
                 string marketCategory = listTovar[45].ToString();
                 string paramName = "";
                 string paramValue = "";
@@ -451,8 +449,8 @@ namespace Bike18YML
                         }
                     }
                 }
+                allTovars.Add(tovarAtribute);
             }
-            allTovars.Add(tovarAtribute);
         }
 
         private void ReturnCategories(CookieContainer cookie)
@@ -518,8 +516,7 @@ namespace Bike18YML
                 }
             }
         }
-
-
+        
         private string EditDescription(string descript)
         {
             MatchCollection tags = new Regex("<.*?>").Matches(descript);
