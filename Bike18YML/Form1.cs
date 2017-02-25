@@ -136,7 +136,7 @@ namespace Bike18YML
                         }
                         else if (category[0].ToString().Contains("url"))
                         {
-                            urlTovar = new XElement("url", category[1].ToString());
+                            urlTovar = new XElement("url", tovar[2].ToString().Replace("url-", ""));
                         }
                         else if (category[0].ToString().Contains("price"))
                         {
@@ -156,7 +156,7 @@ namespace Bike18YML
                         }
                         else if (category[0].ToString().Contains("name"))
                         {
-                            nameTovar = new XElement("name", category[1].ToString());
+                            nameTovar = new XElement("name", tovar[7].ToString().Replace("name-", ""));
                         }
                         else if (category[0].ToString().Contains("description"))
                         {
