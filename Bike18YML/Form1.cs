@@ -70,7 +70,7 @@ namespace Bike18YML
 
             CreateSaveYML(allTovars);
 
-            MessageBox.Show(count.ToString());
+            MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + q);
         }
 
         private void CreateSaveYML(List<List<string>> allTovars)
@@ -222,6 +222,7 @@ namespace Bike18YML
                     }
                 }
                 offersTovars.Add(offer);
+                count++;
             }
 
             foreach (XElement element in offersTovars)
