@@ -391,11 +391,13 @@ namespace Bike18YML
                                                     valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
                                                     vendor = valueText;
                                                     param.Add("vendor;" + valueText);
+                                                    break;
                                                 }
                                                 else
                                                 {
                                                     valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
                                                     param.Add(paramName + ";" + valueText);
+                                                    break;
                                                 }
                                             }
                                         }
