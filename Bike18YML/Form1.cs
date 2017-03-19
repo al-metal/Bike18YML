@@ -55,7 +55,7 @@ namespace Bike18YML
                 return;
             }
 
-            FileInfo file = new FileInfo("catalog-14.02.2017_21-17-31.xlsx");
+            FileInfo file = new FileInfo("catalog-26.02.2017_22-03-55.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
@@ -152,7 +152,9 @@ namespace Bike18YML
                         }
                         else if (category[0].ToString().Contains("picture"))
                         {
-                            pictureTovar = new XElement("picture", category[1].ToString());
+                            string urlImg = category[1].ToString();
+                            urlImg = urlImg.Replace("\\/", "/");
+                            pictureTovar = new XElement("picture", urlImg);
                         }
                         else if (category[0].ToString().Contains("name"))
                         {
@@ -194,11 +196,11 @@ namespace Bike18YML
                             else
                             {
                                 string[] arrayUnit = arrayStr[2].ToString().Split('-');
-                                param = new XElement("param", arrayStr[3].ToString());
-                                paramName = new XAttribute("name", arrayParam[1].ToString());
-                                paramUnit = new XAttribute("unit", arrayUnit[1].ToString());
-                                param.Add(paramUnit);
-                                param.Add(paramName);
+                                string strParam = arrayStr[3].ToString();
+                                string strname = arrayParam[1].ToString();
+                                string strunit = arrayUnit[1].ToString();
+
+                                param = new XElement("param", new XAttribute("name", strname), new XAttribute("unit", strunit),  strParam);
                                 paramList2.Add(param);
                             }
                         }
@@ -525,6 +527,8 @@ namespace Bike18YML
             MatchCollection tags = new Regex("<.*?>").Matches(descript);
             foreach (Match ss in tags)
             {
+                if(ss.ToString() == "</p>")
+                    descript = descript.Replace(ss.ToString(), " ");
                 descript = descript.Replace(ss.ToString(), "");
             }
             descript.Trim();
