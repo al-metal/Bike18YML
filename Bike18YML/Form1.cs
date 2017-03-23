@@ -55,13 +55,13 @@ namespace Bike18YML
                 return;
             }
 
-            FileInfo file = new FileInfo("catalog-26.02.2017_22-03-55.xlsx");
+            FileInfo file = new FileInfo("catalog-20.03.2017_18-55-07.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
             pb.Maximum = q;
-            for (int i = 2; q >= i; i++)
+            for (int i = 2; 10 >= i; i++)
             {
                 string idTovar = w.Cells[i, 1].Value.ToString();
                 Tovar(cookie, idTovar);
@@ -75,9 +75,10 @@ namespace Bike18YML
 
         private void CreateSaveYML(List<List<string>> allTovars)
         {
+            
             List<XElement> offersTovars = new List<XElement>();
             DateTime thisDate = DateTime.Now;
-            string date = thisDate.ToString(thisDate.ToString("yyyy-mm-dd H:mm"));
+            string date = thisDate.ToString(thisDate.ToString("yyyy-MM-dd H:mm"));
 
             XDeclaration xDeclaration = new XDeclaration("1.0", "UTF-8", "no");
             XDocument xdoc = new XDocument(new XDocumentType("yml_catalog", null, "shops.dtd", null));
@@ -106,6 +107,7 @@ namespace Bike18YML
             currencies.Add(currencieRate);
             for (int i = 0; allTovars.Count > i; i++)
             {
+                List<string> images = new List<string>();
                 List<string> tovar = allTovars[i];
                 XElement offer = new XElement("param", i);
                 XAttribute idProd = null;
@@ -127,7 +129,7 @@ namespace Bike18YML
                 {
                     string str = tovar[t].ToString();
                     string[] arrayStr = str.Split(';');
-                    if (arrayStr.Length == 1 || str.Contains("description-"))
+                    if (arrayStr.Length == 1 || str.Contains("description-") || str.Contains("picture-"))
                     {
                         string[] category = arrayStr[0].ToString().Split('-');
                         if (category[0].ToString().Contains("market_category"))
@@ -152,9 +154,15 @@ namespace Bike18YML
                         }
                         else if (category[0].ToString().Contains("picture"))
                         {
-                            string urlImg = category[1].ToString();
-                            urlImg = urlImg.Replace("\\/", "/");
-                            pictureTovar = new XElement("picture", urlImg);
+                            foreach (string s in arrayStr)
+                            {
+                                if (s.Contains("http"))
+                                {
+                                    string urlImg = s.Replace("\\/", "/").Replace("//", "/").Replace("picture-", "");
+                                    images.Add(urlImg);
+                                }
+                            }
+                            
                         }
                         else if (category[0].ToString().Contains("name"))
                         {
@@ -211,7 +219,11 @@ namespace Bike18YML
                 offer.Add(priceTovar);
                 offer.Add(currencyIdTovar);
                 offer.Add(categoryIdTovar);
-                offer.Add(pictureTovar);
+                foreach(string s in images)
+                {
+                    pictureTovar = new XElement("picture", s);
+                    offer.Add(pictureTovar);
+                }
                 offer.Add(nameTovar);
                 offer.Add(descriptionTovar);
                 if (vendorTovar != null)
@@ -282,6 +294,9 @@ namespace Bike18YML
                 string currencyId = "RUR";
                 string categoryId = listTovar[2].ToString();
                 string picture = listTovar[32].ToString();
+
+                MatchCollection allPictures = ReturnImagesTovar(cookie, id);
+
                 string name = listTovar[4].ToString();
                 string description = EditDescription(listTovar[7].ToString());
                 string available = "";
@@ -418,7 +433,13 @@ namespace Bike18YML
                 tovarAtribute.Add("price-" + price);
                 tovarAtribute.Add("currencyId-" + currencyId);
                 tovarAtribute.Add("categoryId-" + categoryId);
-                tovarAtribute.Add("picture-" + picture);
+                string img = "picture-http://" + picture;
+                foreach(Match ss in allPictures)
+                {
+                    string str = ss.ToString();
+                    img = img + ";http://" + str;
+                }
+                tovarAtribute.Add(img);
                 tovarAtribute.Add("name-" + name);
                 tovarAtribute.Add("description-" + description);
                 if (vendor != "")
@@ -456,6 +477,13 @@ namespace Bike18YML
                 }
                 allTovars.Add(tovarAtribute);
             }
+        }
+
+        private MatchCollection ReturnImagesTovar(CookieContainer cookie, string id)
+        {
+            string otv = request.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + id);
+            MatchCollection images = new Regex("(?<=\"src\":\").*?(?=\")").Matches(otv);
+            return images;
         }
 
         private void ReturnCategories(CookieContainer cookie)
