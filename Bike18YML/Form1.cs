@@ -61,7 +61,7 @@ namespace Bike18YML
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
             pb.Maximum = q;
-            for (int i = 2; 10 >= i; i++)
+            for (int i = 2; q >= i; i++)
             {
                 string idTovar = w.Cells[i, 1].Value.ToString();
                 Tovar(cookie, idTovar);
@@ -403,7 +403,7 @@ namespace Bike18YML
                                             string str2 = sss.ToString();
                                             if (str2.Contains(valueId))
                                             {
-                                                if (b)
+                                                if (b && valueId != "")
                                                 {
                                                     valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
                                                     vendor = valueText;
