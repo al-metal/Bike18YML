@@ -38,7 +38,7 @@ namespace Bike18YML
             tbLogin.Text = Properties.Settings.Default.loginBike18.ToString();
             tbPassword.Text = Properties.Settings.Default.passwordBike18.ToString();
         }
-        
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             #region pass/login
@@ -55,7 +55,7 @@ namespace Bike18YML
                 return;
             }
 
-            FileInfo file = new FileInfo("catalog-20.03.2017_18-55-07.xlsx");
+            FileInfo file = new FileInfo("catalog-24.03.2017_22-35-03.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
@@ -75,7 +75,7 @@ namespace Bike18YML
 
         private void CreateSaveYML(List<List<string>> allTovars)
         {
-            
+
             List<XElement> offersTovars = new List<XElement>();
             DateTime thisDate = DateTime.Now;
             string date = thisDate.ToString(thisDate.ToString("yyyy-MM-dd H:mm"));
@@ -115,6 +115,7 @@ namespace Bike18YML
                 XElement urlTovar = null;
                 XElement market_category = null;
                 XElement priceTovar = null;
+                XElement oldPriceTovar = null;
                 XElement currencyIdTovar = null;
                 XElement categoryIdTovar = null;
                 XElement pictureTovar = null;
@@ -144,6 +145,10 @@ namespace Bike18YML
                         {
                             priceTovar = new XElement("price", category[1].ToString());
                         }
+                        else if (category[0].ToString().Contains("oldPrice"))
+                        {
+                            oldPriceTovar = new XElement("oldprice", category[1].ToString());
+                        }
                         else if (category[0].ToString().Contains("currencyId"))
                         {
                             currencyIdTovar = new XElement("currencyId", category[1].ToString());
@@ -162,11 +167,16 @@ namespace Bike18YML
                                     images.Add(urlImg);
                                 }
                             }
-                            
+
                         }
                         else if (category[0].ToString().Contains("name"))
                         {
-                            nameTovar = new XElement("name", tovar[7].ToString().Replace("name-", ""));
+                            if(oldPriceTovar == null)
+                            {
+                                nameTovar = new XElement("name", tovar[7].ToString().Replace("name-", ""));
+                            }
+                            else
+                            nameTovar = new XElement("name", tovar[8].ToString().Replace("name-", ""));
                         }
                         else if (category[0].ToString().Contains("description"))
                         {
@@ -208,7 +218,7 @@ namespace Bike18YML
                                 string strname = arrayParam[1].ToString();
                                 string strunit = arrayUnit[1].ToString();
 
-                                param = new XElement("param", new XAttribute("name", strname), new XAttribute("unit", strunit),  strParam);
+                                param = new XElement("param", new XAttribute("name", strname), new XAttribute("unit", strunit), strParam);
                                 paramList2.Add(param);
                             }
                         }
@@ -217,9 +227,10 @@ namespace Bike18YML
                 offer.Add(market_category);
                 offer.Add(urlTovar);
                 offer.Add(priceTovar);
+                offer.Add(oldPriceTovar);
                 offer.Add(currencyIdTovar);
                 offer.Add(categoryIdTovar);
-                foreach(string s in images)
+                foreach (string s in images)
                 {
                     pictureTovar = new XElement("picture", s);
                     offer.Add(pictureTovar);
@@ -282,7 +293,7 @@ namespace Bike18YML
             {
                 string id = listTovar[0].ToString();
                 string group = listTovar[3].ToString();
-                if(listTovar[1].ToString() != "")
+                if (listTovar[1].ToString() != "")
                     urlTovar = "https://bike18.ru/products/" + listTovar[1].ToString();
                 string marketCategory = listTovar[45].ToString();
                 string paramName = "";
@@ -290,7 +301,17 @@ namespace Bike18YML
                 string unit = "";
                 string vendor = "";
                 string url = urlTovar;
-                string price = listTovar[9].ToString();
+                string price = null;
+                string oldPrice = null;
+                if (listTovar[10].ToString() == "")
+                    price = listTovar[9].ToString();
+                else
+                {
+                    price = listTovar[10].ToString();
+                    oldPrice = listTovar[9].ToString();
+                }
+                   
+
                 string currencyId = "RUR";
                 string categoryId = listTovar[2].ToString();
                 string picture = listTovar[32].ToString();
@@ -431,10 +452,12 @@ namespace Bike18YML
                     tovarAtribute.Add("market_category-" + marketCategory);
                 tovarAtribute.Add("url-" + url);
                 tovarAtribute.Add("price-" + price);
+                if(oldPrice != null)
+                tovarAtribute.Add("oldPrice-" + oldPrice);
                 tovarAtribute.Add("currencyId-" + currencyId);
                 tovarAtribute.Add("categoryId-" + categoryId);
                 string img = "picture-http://" + picture;
-                foreach(Match ss in allPictures)
+                foreach (Match ss in allPictures)
                 {
                     string str = ss.ToString();
                     img = img + ";http://" + str;
@@ -549,13 +572,13 @@ namespace Bike18YML
                 }
             }
         }
-        
+
         private string EditDescription(string descript)
         {
             MatchCollection tags = new Regex("<.*?>").Matches(descript);
             foreach (Match ss in tags)
             {
-                if(ss.ToString() == "</p>")
+                if (ss.ToString() == "</p>")
                     descript = descript.Replace(ss.ToString(), " ");
                 descript = descript.Replace(ss.ToString(), "");
             }
