@@ -320,6 +320,8 @@ namespace Bike18YML
 
                 string name = listTovar[4].ToString();
                 string description = EditDescription(listTovar[7].ToString());
+                string descriptionFull = EditDescription(listTovar[7].ToString());
+                description = " " + description + "<br />   " + descriptionFull; 
                 string available = "";
                 if (listTovar[43].ToString() == "0")
                     available = "\"false\"";
@@ -578,9 +580,16 @@ namespace Bike18YML
             MatchCollection tags = new Regex("<.*?>").Matches(descript);
             foreach (Match ss in tags)
             {
-                if (ss.ToString() == "</p>")
-                    descript = descript.Replace(ss.ToString(), " ");
-                descript = descript.Replace(ss.ToString(), "");
+                if(ss.ToString() != "<br />")
+                {
+                    if (ss.ToString() == "</p>" || ss.ToString().Contains("<li") || ss.ToString().Contains("<a"))
+                        descript = descript.Replace(ss.ToString(), " ");
+
+                    if (ss.ToString().Contains("<p"))
+                        descript = descript.Replace(ss.ToString(), "<br />");
+
+                    descript = descript.Replace(ss.ToString(), "");
+                }
             }
             descript.Trim();
             return descript;
