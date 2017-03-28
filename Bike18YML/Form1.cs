@@ -373,7 +373,8 @@ namespace Bike18YML
                     string valueText = "";
                     string chekbox = "";
 
-                    MatchCollection attributes = new Regex("primaryKey[\\w\\W]*?(?=primaryKey)").Matches(ssss);
+                    MatchCollection attributes = new Regex("(?<=primaryKey)[\\w\\W]*?(?=primaryKey)").Matches(ssss);
+                    MatchCollection attributes2 = new Regex("(?<=primaryKey)[\\w\\W]*?(?=})").Matches(ssss);
                     string atributeTovar = listTovar[40].ToString() + "primaryKey";
                     MatchCollection atributesTovar = new Regex("primaryKey.*?(?=primaryKey)").Matches(atributeTovar);
 
@@ -424,7 +425,77 @@ namespace Bike18YML
                                         foreach (Match sss in options)
                                         {
                                             string str2 = sss.ToString();
-                                            if (str2.Contains(valueId))
+                                            if (str2.Contains(valueId) && valueId != "")
+                                            {
+                                                if (b && valueId != "")
+                                                {
+                                                    valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
+                                                    vendor = valueText;
+                                                    param.Add("vendor;" + valueText);
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
+                                                    param.Add(paramName + ";" + valueText);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    for(int i = atributesTovar.Count - 1; atributesTovar.Count> i; i++)
+                    {
+                        string strTovar = atributesTovar[i].ToString() + "&";
+
+                        primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
+                        attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
+                        empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
+                        valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
+                        chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+
+                        if (chekbox != "")
+                        {
+                            if (chekbox == "1")
+                                paramValue = "есть";
+                        }
+                        else
+                            paramValue = new Regex("(?<=text]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+
+                        foreach (Match ss in attributes2)
+                        {
+                            string str = ss.ToString();
+                            paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
+                            unit = new Regex("(?<=unit\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
+                            if (unit == "\\")
+                                unit = "\"";
+                            if (str.Contains(primaryKey) && primaryKey != "")
+                            {
+                                bool b = false;
+                                if (str.Contains("vendor"))
+                                {
+                                    b = true;
+                                }
+                                if (str.Contains("options"))
+                                {
+                                    MatchCollection options = new Regex("valueId\": [\\w\\W]*?(?=})").Matches(str);
+                                    if (options.Count == 0)
+                                    {
+                                        if (unit == "")
+                                            param.Add(paramName + ";" + paramValue);
+                                        else
+                                            param.Add(paramName + ";" + paramValue + ";" + unit);
+                                    }
+                                    else
+                                    {
+                                        foreach (Match sss in options)
+                                        {
+                                            string str2 = sss.ToString();
+                                            if (str2.Contains(valueId) && valueId != "")
                                             {
                                                 if (b && valueId != "")
                                                 {
