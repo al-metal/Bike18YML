@@ -77,7 +77,7 @@ namespace Bike18
                 req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
                 req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:44.0) Gecko/20100101 Firefox/44.0";
                 req.Method = "POST";
-                req.Proxy = null;
+                //req.Proxy = null;
                 req.ContentType = "application/x-www-form-urlencoded";
                 req.CookieContainer = cookie;
                 res = (HttpWebResponse)req.GetResponse();
