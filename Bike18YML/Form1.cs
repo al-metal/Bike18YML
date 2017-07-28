@@ -57,7 +57,7 @@ namespace Bike18YML
 
             File.Delete("erorTovar");
 
-            FileInfo file = new FileInfo("catalog-11.04.2017_22-30-06.xlsx");
+            FileInfo file = new FileInfo("Прайс.xlsx");
             ExcelPackage p = new ExcelPackage(file);
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
@@ -95,7 +95,12 @@ namespace Bike18YML
                     tovar.Add("");
                 string nalichieTovar = "";
                 if (w.Cells[i, 7].Value != null)
-                    tovar.Add(w.Cells[i, 7].Value.ToString());
+                {
+                    if (w.Cells[i, 7].Value.ToString() == "0"   )
+                        continue;
+                    else
+                        tovar.Add(w.Cells[i, 7].Value.ToString());
+                }
                 else
                     tovar.Add("");
                 string postavkaTovar = "";
@@ -145,7 +150,7 @@ namespace Bike18YML
 
             CreateSaveYML(allTovars);
 
-            MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + q);
+            MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
         }
 
         private void CreateSaveYML(List<List<string>> allTovars)
@@ -306,6 +311,8 @@ namespace Bike18YML
                         }
                     }
                 }
+                XElement sales_notes = new XElement("sales_notes", "Работаем по предоплате. Выгодные условия");
+                offer.Add(sales_notes);
                 offer.Add(market_category);
                 offer.Add(urlTovar);
                 offer.Add(priceTovar);
@@ -644,21 +651,26 @@ namespace Bike18YML
                 tovarAtribute.Add("currencyId-" + currencyId);
                 tovarAtribute.Add("categoryId-" + categoryId);
                 string img = "picture-" + picture;
+                int countImages = 0;
                 foreach (Match ss in allPictures)
                 {
                     string str = ss.ToString();
-                    if (str.Contains(".jpg") || str.Contains(".jpeg") || str.Contains(".png"))
+                    if (str.Contains(".jpg") || str.Contains(".jpeg") || str.Contains(".png") || str.Contains(".JPG"))
                     {
+                        if (countImages > 9)
+                            continue;
                         if (str.Contains("i.siteapi.org"))
                         {
                             img = img + ";http://" + str;
                             img = img.Replace("\\/", "/").Replace("///", "//");
                             img = img.Replace("\\/", "/").Replace("///", "//");
+                            countImages++;
                         }
                         else
                         {
                             img = img + ";http://bike18.ru" + str;
                             img = img.Replace("\\/", "/").Replace("///", "//");
+                            countImages++;
                         }
                     }
                 }
