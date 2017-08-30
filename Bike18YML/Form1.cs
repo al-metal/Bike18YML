@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using TestLibrary;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,7 +24,6 @@ namespace Bike18YML
     {
         int count = 0;
         nethouse nethouse = new nethouse();
-        httpRequest request = new httpRequest();
         List<List<string>> allTovars = new List<List<string>>();
         List<XElement> categories = new List<XElement>();
         XElement categoriesElement = new XElement("categories");
@@ -364,7 +364,7 @@ namespace Bike18YML
         private string ReturnUrlAllTovar(string url)
         {
             string urlAllTovar = "";
-            string otv = request.getRequest(url);
+            string otv = nethouse.getRequest(url);
             MatchCollection categoryIdCollection = new Regex("(?<=categoryId\" value=\").*?(?=\">)").Matches(otv);
             string categoryId = categoryIdCollection[1].ToString();
             urlAllTovar = "https://bike18.ru/products/category/" + categoryId + "/page/all";
@@ -1017,7 +1017,7 @@ namespace Bike18YML
 
         private MatchCollection ReturnImagesTovar(CookieContainer cookie, string id)
         {
-            string otv = request.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + id);
+            string otv = nethouse.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + id);
             MatchCollection images = new Regex("(?<=\"src\":\").*?(?=\")").Matches(otv);
             if (images.Count == 0)
                 images = new Regex("(?<=formats\":{\"raw\":\").*?(?=\",\")").Matches(otv);
