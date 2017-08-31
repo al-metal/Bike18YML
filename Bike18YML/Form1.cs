@@ -60,32 +60,32 @@ namespace Bike18YML
                 List<string> tovar = new List<string>();
                 string idTovar = w.Cells[i, 1].Value.ToString();
                 tovar.Add(w.Cells[i, 1].Value.ToString());
-                string articleTovat = "";
+
                 if (w.Cells[i, 2].Value != null)
                     tovar.Add(w.Cells[i, 2].Value.ToString());
                 else
                     tovar.Add("");
-                string nameTovar = "";
+
                 if (w.Cells[i, 3].Value != null)
                     tovar.Add(w.Cells[i, 3].Value.ToString());
                 else
                     tovar.Add("");
-                string priceTovar = "";
+
                 if (w.Cells[i, 4].Value != null)
                     tovar.Add(w.Cells[i, 4].Value.ToString());
                 else
                     tovar.Add("");
-                string newPriceTovar = "";
+
                 if (w.Cells[i, 5].Value != null)
                     tovar.Add(w.Cells[i, 5].Value.ToString());
                 else
                     tovar.Add("");
-                string categoryTovar = null;
+
                 if (w.Cells[i, 6].Value != null)
                     tovar.Add(w.Cells[i, 6].Value.ToString());
                 else
                     tovar.Add("");
-                string nalichieTovar = "";
+
                 if (w.Cells[i, 7].Value != null)
                 {
                     if (w.Cells[i, 7].Value.ToString() == "0"   )
@@ -95,42 +95,42 @@ namespace Bike18YML
                 }
                 else
                     tovar.Add("");
-                string postavkaTovar = "";
+
                 if (w.Cells[i, 8].Value != null)
                     tovar.Add(w.Cells[i, 8].Value.ToString());
                 else
                     tovar.Add("");
-                string srokPostavkiTovar = "";
+
                 if (w.Cells[i, 9].Value != null)
                     tovar.Add(w.Cells[i, 9].Value.ToString());
                 else
                     tovar.Add("");
-                string miniTextTovar = "";
+
                 if (w.Cells[i, 10].Value != null)
                     tovar.Add(w.Cells[i, 10].Value.ToString());
                 else
                     tovar.Add("");
-                string fullTextTovar = "";
+
                 if (w.Cells[i, 11].Value != null)
                     tovar.Add(w.Cells[i, 11].Value.ToString());
                 else
                     tovar.Add("");
-                string titleTovar = "";
+
                 if (w.Cells[i, 12].Value != null)
                     tovar.Add(w.Cells[i, 12].Value.ToString());
                 else
                     tovar.Add("");
-                string descriptionTovar = "";
+
                 if (w.Cells[i, 13].Value != null)
                     tovar.Add(w.Cells[i, 13].Value.ToString());
                 else
                     tovar.Add("");
-                string keywordsTovar = "";
+
                 if (w.Cells[i, 14].Value != null)
                     tovar.Add(w.Cells[i, 14].Value.ToString());
                 else
                     tovar.Add("");
-                string slugTovar = "";
+
                 if (w.Cells[i, 15].Value != null)
                     tovar.Add(w.Cells[i, 15].Value.ToString());
                 else
@@ -196,7 +196,7 @@ namespace Bike18YML
                 XElement vendorTovar = null;
                 XElement param = new XElement("param", i);
                 XAttribute paramName = null;
-                XAttribute paramUnit = null;
+                
                 List<XElement> paramList2 = new List<XElement>();
                 for (int t = 0; tovar.Count > t; t++)
                 {
