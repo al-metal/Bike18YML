@@ -1,22 +1,14 @@
-﻿using Bike18;
-using Newtonsoft.Json;
+﻿using NehouseLibrary;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using TestLibrary;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
+using xNet.Net;
 
 namespace Bike18YML
 {
@@ -47,7 +39,7 @@ namespace Bike18YML
             Properties.Settings.Default.Save();
             #endregion
 
-            CookieContainer cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
+            CookieDictionary cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             if (cookie.Count != 4)
             {
@@ -371,7 +363,7 @@ namespace Bike18YML
             return urlAllTovar;
         }
 
-        private void Tovar2(CookieContainer cookie, List<string> tovar)
+        private void Tovar2(CookieDictionary cookie, List<string> tovar)
         {
 
             string idTovar = tovar[0];
@@ -458,16 +450,17 @@ namespace Bike18YML
                         urlTovarAttrib = "https://bike18.nethouse.ru/api/v1/catalog/attributes/" + group + "/" + group;
                     try
                     {
-                        HttpWebResponse res = null;
-                        HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
-                        req.Accept = "application/json, text/plain, */*";
-                        req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
-                        req.Method = "GET";
-                        req.CookieContainer = cookie;
-                        res = (HttpWebResponse)req.GetResponse();
-                        StreamReader ressr = new StreamReader(res.GetResponseStream());
-                        otv = ressr.ReadToEnd();
-                        res.Close();
+                        otv = nethouse.getRequest(cookie, urlTovarAttrib);
+                        //HttpWebResponse res = null;
+                        //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
+                        //req.Accept = "application/json, text/plain, */*";
+                        //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+                        //req.Method = "GET";
+                        //req.CookieContainer = cookie;
+                        //res = (HttpWebResponse)req.GetResponse();
+                        //StreamReader ressr = new StreamReader(res.GetResponseStream());
+                        //otv = ressr.ReadToEnd();
+                        //res.Close();
                     }
                     catch
                     {
@@ -478,7 +471,7 @@ namespace Bike18YML
                     {
                         ReturnCategories(cookie);
                     }
-                    if (otv == "")
+                    if (otv == "err")
                         return;
                     dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
                     string ssss = stuff1.ToString();
@@ -721,7 +714,7 @@ namespace Bike18YML
             }
         }
 
-        private void Tovar(CookieContainer cookie, string idTovar)
+        private void Tovar(CookieDictionary cookie, string idTovar)
         {
             string otv = "";
             List<string> tovarAtribute = new List<string>();
@@ -785,16 +778,19 @@ namespace Bike18YML
                     else
                         urlTovarAttrib = "https://bike18.nethouse.ru/api/v1/catalog/attributes/" + group + "/" + group;
 
-                    HttpWebResponse res = null;
-                    HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
-                    req.Accept = "application/json, text/plain, */*";
-                    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
-                    req.Method = "GET";
-                    req.CookieContainer = cookie;
-                    res = (HttpWebResponse)req.GetResponse();
-                    StreamReader ressr = new StreamReader(res.GetResponseStream());
-                    otv = ressr.ReadToEnd();
-                    res.Close();
+                    otv = nethouse.getRequest(cookie, urlTovarAttrib);
+
+                    //HttpWebResponse res = null;
+                    //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
+                    //req.Accept = "application/json, text/plain, */*";
+                    //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+                    //req.Method = "GET";
+                    //req.CookieContainer = cookie;
+                    //res = (HttpWebResponse)req.GetResponse();
+                    //StreamReader ressr = new StreamReader(res.GetResponseStream());
+                    //otv = ressr.ReadToEnd();
+                    //res.Close();
+
                     if (categories.Count == 0)
                     {
                         ReturnCategories(cookie);
@@ -1015,7 +1011,7 @@ namespace Bike18YML
             }
         }
 
-        private MatchCollection ReturnImagesTovar(CookieContainer cookie, string id)
+        private MatchCollection ReturnImagesTovar(CookieDictionary cookie, string id)
         {
             string otv = nethouse.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + id);
             MatchCollection images = new Regex("(?<=\"src\":\").*?(?=\")").Matches(otv);
@@ -1024,20 +1020,23 @@ namespace Bike18YML
             return images;
         }
 
-        private void ReturnCategories(CookieContainer cookie)
+        private void ReturnCategories(CookieDictionary cookie)
         {
             List<string> counts = new List<string>();
             string otv = "";
-            HttpWebResponse res = null;
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/categoriesselect");
-            req.Accept = "application/json, text/plain, */*";
-            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
-            req.Method = "GET";
-            req.CookieContainer = cookie;
-            res = (HttpWebResponse)req.GetResponse();
-            StreamReader ressr = new StreamReader(res.GetResponseStream());
-            otv = ressr.ReadToEnd();
-            res.Close();
+
+            otv = nethouse.getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/categoriesselect");
+
+            //HttpWebResponse res = null;
+            //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/categoriesselect");
+            //req.Accept = "application/json, text/plain, */*";
+            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+            //req.Method = "GET";
+            //req.CookieContainer = cookie;
+            //res = (HttpWebResponse)req.GetResponse();
+            //StreamReader ressr = new StreamReader(res.GetResponseStream());
+            //otv = ressr.ReadToEnd();
+            //res.Close();
 
             dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
             string ssss = stuff1.ToString();
