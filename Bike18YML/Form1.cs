@@ -88,7 +88,7 @@ namespace Bike18YML
 
                 if (w.Cells[i, 7].Value != null)
                 {
-                    if (w.Cells[i, 7].Value.ToString() == "0"   )
+                    if (w.Cells[i, 7].Value.ToString() == "0")
                         continue;
                     else
                         tovar.Add(w.Cells[i, 7].Value.ToString());
@@ -196,7 +196,7 @@ namespace Bike18YML
                 XElement vendorTovar = null;
                 XElement param = new XElement("param", i);
                 XAttribute paramName = null;
-                
+
                 List<XElement> paramList2 = new List<XElement>();
                 for (int t = 0; tovar.Count > t; t++)
                 {
@@ -450,7 +450,8 @@ namespace Bike18YML
                         urlTovarAttrib = "https://bike18.nethouse.ru/api/v1/catalog/attributes/" + group + "/" + group;
                     try
                     {
-                        otv = nethouse.getRequest(cookie, urlTovarAttrib);
+                        if (urlTovarAttrib != "https://bike18.nethouse.ru/api/v1/catalog/attributes/0/0")
+                            otv = nethouse.getRequest(cookie, urlTovarAttrib);
                         //HttpWebResponse res = null;
                         //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
                         //req.Accept = "application/json, text/plain, */*";
@@ -467,90 +468,93 @@ namespace Bike18YML
                         otv = "1";
                     }
 
-                    if (categories.Count == 0)
+                    if(otv != "")
                     {
-                        ReturnCategories(cookie);
-                    }
-                    if (otv == "err")
-                        return;
-                    dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
-                    string ssss = stuff1.ToString();
-
-
-
-                    string primaryKey = "";
-                    string attributeId = "";
-                    string empty = "";
-                    string valueId = "";
-                    string valueText = "";
-                    string chekbox = "";
-
-                    MatchCollection attributes = new Regex("(?<=primaryKey)[\\w\\W]*?(?=primaryKey)").Matches(ssss);
-                    MatchCollection attributes2 = new Regex("(?<=primaryKey)[\\w\\W]*?(?=})").Matches(ssss);
-                    string atributeTovar = listTovar[40].ToString() + "primaryKey";
-                    MatchCollection atributesTovar = new Regex("primaryKey.*?(?=primaryKey)").Matches(atributeTovar);
-
-                    foreach (Match s in atributesTovar)
-                    {
-                        string strTovar = s.ToString() + "&";
-
-                        primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
-                        attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
-                        empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
-                        valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
-                        chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
-
-                        if (chekbox != "")
+                        if (categories.Count == 0)
                         {
-                            if (chekbox == "1")
-                                paramValue = "есть";
+                            ReturnCategories(cookie);
                         }
-                        else
-                            paramValue = new Regex("(?<=text]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+                        if (otv == "err")
+                            return;
+                        dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
+                        string ssss = stuff1.ToString();
 
-                        foreach (Match ss in attributes)
+
+
+                        string primaryKey = "";
+                        string attributeId = "";
+                        string empty = "";
+                        string valueId = "";
+                        string valueText = "";
+                        string chekbox = "";
+
+                        MatchCollection attributes = new Regex("(?<=primaryKey)[\\w\\W]*?(?=primaryKey)").Matches(ssss);
+                        MatchCollection attributes2 = new Regex("(?<=primaryKey)[\\w\\W]*?(?=})").Matches(ssss);
+                        string atributeTovar = listTovar[40].ToString() + "primaryKey";
+                        MatchCollection atributesTovar = new Regex("primaryKey.*?(?=primaryKey)").Matches(atributeTovar);
+
+                        foreach (Match s in atributesTovar)
                         {
-                            string str = ss.ToString();
-                            paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
-                            unit = new Regex("(?<=unit\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
-                            if (unit == "\\")
-                                unit = "\"";
-                            if (str.Contains(primaryKey))
+                            string strTovar = s.ToString() + "&";
+
+                            primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
+                            attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
+                            empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
+                            valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
+                            chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+
+                            if (chekbox != "")
                             {
-                                bool b = false;
-                                if (str.Contains("vendor"))
+                                if (chekbox == "1")
+                                    paramValue = "есть";
+                            }
+                            else
+                                paramValue = new Regex("(?<=text]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
+
+                            foreach (Match ss in attributes)
+                            {
+                                string str = ss.ToString();
+                                paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
+                                unit = new Regex("(?<=unit\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
+                                if (unit == "\\")
+                                    unit = "\"";
+                                if (str.Contains(primaryKey))
                                 {
-                                    b = true;
-                                }
-                                if (str.Contains("options"))
-                                {
-                                    MatchCollection options = new Regex("valueId\": [\\w\\W]*?(?=})").Matches(str);
-                                    if (options.Count == 0)
+                                    bool b = false;
+                                    if (str.Contains("vendor"))
                                     {
-                                        if (unit == "")
-                                            param.Add(paramName + ";" + paramValue);
-                                        else
-                                            param.Add(paramName + ";" + paramValue + ";" + unit);
+                                        b = true;
                                     }
-                                    else
+                                    if (str.Contains("options"))
                                     {
-                                        foreach (Match sss in options)
+                                        MatchCollection options = new Regex("valueId\": [\\w\\W]*?(?=})").Matches(str);
+                                        if (options.Count == 0)
                                         {
-                                            string str2 = sss.ToString();
-                                            if (str2.Contains(valueId) && valueId != "")
+                                            if (unit == "")
+                                                param.Add(paramName + ";" + paramValue);
+                                            else
+                                                param.Add(paramName + ";" + paramValue + ";" + unit);
+                                        }
+                                        else
+                                        {
+                                            foreach (Match sss in options)
                                             {
-                                                if (b && valueId != "")
+                                                string str2 = sss.ToString();
+                                                if (str2.Contains(valueId) && valueId != "")
                                                 {
-                                                    valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
-                                                    vendor = valueText;
-                                                    param.Add("vendor;" + valueText);
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
-                                                    param.Add(paramName + ";" + valueText);
-                                                    break;
+                                                    if (b && valueId != "")
+                                                    {
+                                                        valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
+                                                        vendor = valueText;
+                                                        param.Add("vendor;" + valueText);
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
+                                                        param.Add(paramName + ";" + valueText);
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
@@ -559,6 +563,7 @@ namespace Bike18YML
                             }
                         }
                     }
+                    
                     /* if (atributesTovar.Count != 0)
                      {
                          for (int i = atributesTovar.Count - 1; atributesTovar.Count > i; i++)
@@ -1013,7 +1018,7 @@ namespace Bike18YML
 
         private MatchCollection ReturnImagesTovar(CookieDictionary cookie, string id)
         {
-            string otv = nethouse.PostRequest(cookie, "http://bike18.nethouse.ru/api/catalog/productmedia?id=" + id);
+            string otv = nethouse.getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/productmedia?id=" + id);
             MatchCollection images = new Regex("(?<=\"src\":\").*?(?=\")").Matches(otv);
             if (images.Count == 0)
                 images = new Regex("(?<=formats\":{\"raw\":\").*?(?=\",\")").Matches(otv);
