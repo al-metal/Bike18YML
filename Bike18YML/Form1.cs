@@ -59,6 +59,7 @@ namespace Bike18YML
             {
                 List<string> tovar = new List<string>();
                 string idTovar = w.Cells[i, 1].Value.ToString();
+
                 tovar.Add(w.Cells[i, 1].Value.ToString());
 
                 if (w.Cells[i, 2].Value != null)
@@ -387,7 +388,13 @@ namespace Bike18YML
             string urlTovar = "https://bike18.ru/products/" + idTovar;
 
             List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
-            if (listTovar.Count != 0)
+            if(listTovar == null || listTovar.Count == 0)
+            {
+                StreamWriter sr = new StreamWriter("erorTovar", true, Encoding.GetEncoding(1251));
+                sr.WriteLine(idTovar);
+                sr.Close();
+            }
+            else 
             {
                 string id = idTovar;
 
@@ -710,13 +717,7 @@ namespace Bike18YML
                     }
                 }
                 allTovars.Add(tovarAtribute);
-            }
-            else
-            {
-                StreamWriter sr = new StreamWriter("erorTovar", true, Encoding.GetEncoding(1251));
-                sr.WriteLine(idTovar);
-                sr.Close();
-            }
+            }            
         }
 
         private void Tovar(CookieDictionary cookie, string idTovar)
