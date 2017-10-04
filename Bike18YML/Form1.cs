@@ -67,7 +67,7 @@ namespace Bike18YML
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
-            pb.Maximum = q;
+            pb.Invoke(new Action(() => pb.Maximum = q));
             for (int i = 2; q >= i; i++)
             {
                 CheckCountPosition(countPosition);
@@ -153,7 +153,7 @@ namespace Bike18YML
                     tovar.Add("");
                 //Tovar(cookie, idTovar);
                 Tovar2(cookie, tovar);
-                pb.Value = i;
+                pb.Invoke(new Action(() => pb.Value = i));
                 countPosition++;
             }
 
