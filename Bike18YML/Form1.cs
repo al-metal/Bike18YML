@@ -60,6 +60,7 @@ namespace Bike18YML
 
         private void CreateYML()
         {
+            ControlsFormEnabledFalse();
             File.Delete("erorTovar");
 
             FileInfo file = new FileInfo("Прайс.xlsx");
@@ -158,6 +159,8 @@ namespace Bike18YML
             }
 
             CreateSaveYML(allTovars);
+
+            ControlsFormEnabledFalse();
 
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
         }
@@ -1136,6 +1139,20 @@ namespace Bike18YML
             }
             descript.Trim();
             return descript;
+        }
+
+        private void ControlsFormEnabledTrue()
+        {
+            btnStart.Invoke(new Action(() => btnStart.Enabled = true));
+            tbLogin.Invoke(new Action(() => tbLogin.Enabled = true));
+            tbPassword.Invoke(new Action(() => tbPassword.Enabled = true));
+        }
+
+        private void ControlsFormEnabledFalse()
+        {
+            btnStart.Invoke(new Action(() => btnStart.Enabled = false));
+            tbLogin.Invoke(new Action(() => tbLogin.Enabled = false));
+            tbPassword.Invoke(new Action(() => tbPassword.Enabled = false));
         }
     }
 }
