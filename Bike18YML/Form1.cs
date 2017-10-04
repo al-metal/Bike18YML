@@ -18,6 +18,7 @@ namespace Bike18YML
         Thread forms;
 
         int count = 0;
+        int countPosition = 0;
         nethouse nethouse = new nethouse();
         List<List<string>> allTovars = new List<List<string>>();
         List<XElement> categories = new List<XElement>();
@@ -55,7 +56,6 @@ namespace Bike18YML
             forms = tabl;
             forms.IsBackground = true;
             forms.Start();
-
         }
 
         private void CreateYML()
@@ -70,6 +70,8 @@ namespace Bike18YML
             pb.Maximum = q;
             for (int i = 2; q >= i; i++)
             {
+                CheckCountPosition(countPosition);
+
                 List<string> tovar = new List<string>();
                 string idTovar = w.Cells[i, 1].Value.ToString();
 
@@ -152,11 +154,21 @@ namespace Bike18YML
                 //Tovar(cookie, idTovar);
                 Tovar2(cookie, tovar);
                 pb.Value = i;
+                countPosition++;
             }
 
             CreateSaveYML(allTovars);
 
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
+        }
+
+        private void CheckCountPosition(int countPosition)
+        {
+            if(countPosition >= 500)
+            {
+                Thread.Sleep(300000);
+                countPosition = 0;
+            }
         }
 
         private void CreateSaveYML(List<List<string>> allTovars)
