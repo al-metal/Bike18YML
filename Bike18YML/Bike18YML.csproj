@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus">
-      <HintPath>..\..\Bike18Text\Bike18Text\EPPlus.dll</HintPath>
+      <HintPath>..\..\..\Кодинг\EPPlus 4.0.5\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="NehouseLibrary">
       <HintPath>..\..\NehouseLibrary\NehouseLibrary\bin\Debug\NehouseLibrary.dll</HintPath>

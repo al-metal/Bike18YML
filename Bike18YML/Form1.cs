@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using xNet.Net;
@@ -14,11 +15,14 @@ namespace Bike18YML
 {
     public partial class Form1 : Form
     {
+        Thread forms;
+
         int count = 0;
         nethouse nethouse = new nethouse();
         List<List<string>> allTovars = new List<List<string>>();
         List<XElement> categories = new List<XElement>();
         XElement categoriesElement = new XElement("categories");
+        CookieDictionary cookie;
 
         public Form1()
         {
@@ -39,7 +43,7 @@ namespace Bike18YML
             Properties.Settings.Default.Save();
             #endregion
 
-            CookieDictionary cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
+            cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
             if (cookie.Count != 4)
             {
@@ -47,6 +51,15 @@ namespace Bike18YML
                 return;
             }
 
+            Thread tabl = new Thread(() => CreateYML());
+            forms = tabl;
+            forms.IsBackground = true;
+            forms.Start();
+
+        }
+
+        private void CreateYML()
+        {
             File.Delete("erorTovar");
 
             FileInfo file = new FileInfo("Прайс.xlsx");
@@ -389,7 +402,7 @@ namespace Bike18YML
 
             List<string> listTovar = nethouse.GetProductList(cookie, urlTovar);
             if(listTovar == null || listTovar.Count == 0)
-            {
+             {
                 StreamWriter sr = new StreamWriter("erorTovar", true, Encoding.GetEncoding(1251));
                 sr.WriteLine(idTovar);
                 sr.Close();
