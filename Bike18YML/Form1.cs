@@ -422,6 +422,7 @@ namespace Bike18YML
                 StreamWriter sr = new StreamWriter("erorTovar", true, Encoding.GetEncoding(1251));
                 sr.WriteLine(idTovar);
                 sr.Close();
+                tbErrUrl.Invoke(new Action(() => tbErrUrl.AppendText(urlTovar + "\n")));
             }
             else 
             {
@@ -511,7 +512,11 @@ namespace Bike18YML
                             ReturnCategories(cookie);
                         }
                         if (otv == "err")
+                        {
+                            tbErrUrl.Invoke(new Action(() => tbErrUrl.AppendText(urlTovar + "\n")));
                             return;
+                        }
+                            
                         dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
                         string ssss = stuff1.ToString();
 

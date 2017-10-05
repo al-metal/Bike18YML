@@ -35,6 +35,8 @@
             this.pb = new System.Windows.Forms.ProgressBar();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.lblPositions = new System.Windows.Forms.Label();
+            this.tbErrUrl = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tbLogin
@@ -82,11 +84,31 @@
             this.lblPositions.Size = new System.Drawing.Size(0, 13);
             this.lblPositions.TabIndex = 6;
             // 
+            // tbErrUrl
+            // 
+            this.tbErrUrl.Enabled = false;
+            this.tbErrUrl.Location = new System.Drawing.Point(15, 113);
+            this.tbErrUrl.Multiline = true;
+            this.tbErrUrl.Name = "tbErrUrl";
+            this.tbErrUrl.Size = new System.Drawing.Size(341, 208);
+            this.tbErrUrl.TabIndex = 7;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 97);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(212, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Товары которые обработать не удалось";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(373, 333);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbErrUrl);
             this.Controls.Add(this.lblPositions);
             this.Controls.Add(this.pb);
             this.Controls.Add(this.btnStart);
@@ -108,6 +130,8 @@
         private System.Windows.Forms.ProgressBar pb;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label lblPositions;
+        private System.Windows.Forms.TextBox tbErrUrl;
+        private System.Windows.Forms.Label label1;
     }
 }
 
