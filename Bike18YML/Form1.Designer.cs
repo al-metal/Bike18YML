@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tbLogin = new System.Windows.Forms.TextBox();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.pb = new System.Windows.Forms.ProgressBar();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.lblPositions = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tbLogin
@@ -66,11 +69,25 @@
             this.pb.Size = new System.Drawing.Size(344, 23);
             this.pb.TabIndex = 3;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // lblPositions
+            // 
+            this.lblPositions.AutoSize = true;
+            this.lblPositions.Location = new System.Drawing.Point(12, 64);
+            this.lblPositions.Name = "lblPositions";
+            this.lblPositions.Size = new System.Drawing.Size(0, 13);
+            this.lblPositions.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(373, 333);
+            this.Controls.Add(this.lblPositions);
             this.Controls.Add(this.pb);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.tbPassword);
@@ -89,6 +106,8 @@
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.ProgressBar pb;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Label lblPositions;
     }
 }
 

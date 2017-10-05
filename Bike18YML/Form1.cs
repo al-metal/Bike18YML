@@ -72,6 +72,7 @@ namespace Bike18YML
             for (int i = 2; q >= i; i++)
             {
                 CheckCountPosition(countPosition);
+                lblPositions.Invoke(new Action(() => lblPositions.Text = "Обработано позиций " + i + " из " + q));
 
                 List<string> tovar = new List<string>();
                 string idTovar = w.Cells[i, 1].Value.ToString();
