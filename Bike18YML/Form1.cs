@@ -71,7 +71,7 @@ namespace Bike18YML
             pb.Invoke(new Action(() => pb.Maximum = q));
             for (int i = 2; q >= i; i++)
             {
-                CheckCountPosition(countPosition);
+                countPosition = CheckCountPosition(countPosition);
                 lblPositions.Invoke(new Action(() => lblPositions.Text = "Обработано позиций " + i + " из " + q));
 
                 List<string> tovar = new List<string>();
@@ -166,13 +166,14 @@ namespace Bike18YML
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
         }
 
-        private void CheckCountPosition(int countPosition)
+        private int CheckCountPosition(int countPosition)
         {
             if(countPosition >= 500)
             {
                 Thread.Sleep(300000);
                 countPosition = 0;
             }
+            return countPosition;
         }
 
         private void CreateSaveYML(List<List<string>> allTovars)
