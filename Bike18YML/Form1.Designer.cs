@@ -86,7 +86,6 @@
             // 
             // tbErrUrl
             // 
-            this.tbErrUrl.Enabled = false;
             this.tbErrUrl.Location = new System.Drawing.Point(15, 113);
             this.tbErrUrl.Multiline = true;
             this.tbErrUrl.Name = "tbErrUrl";
