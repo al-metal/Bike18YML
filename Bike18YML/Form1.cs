@@ -125,7 +125,17 @@ namespace Bike18YML
                     tovar.Add("");
 
                 if (w.Cells[i, 10].Value != null)
-                    tovar.Add(w.Cells[i, 10].Value.ToString());
+                {
+                    string miniText = w.Cells[i, 10].Value.ToString();
+                    if (miniText.Contains("кредит") || miniText.Contains("bike18") || miniText.Contains("РАССРОЧКУ") || miniText.Contains("контакте") || miniText.Contains("нашу группу") || miniText.Contains("менеджерам") || miniText.Contains("Звоните") || miniText.Contains("пишите") || miniText.Contains("почту ") || miniText.Contains("moto@bike18.ru") || miniText.Contains("BIKE18") || miniText.Contains("BIKE18.RU") || miniText.Contains("Механики"))
+                    {
+
+                    }
+                    else
+                    {
+                        tovar.Add(w.Cells[i, 10].Value.ToString());
+                    }
+                }   
                 else
                     tovar.Add("");
 
