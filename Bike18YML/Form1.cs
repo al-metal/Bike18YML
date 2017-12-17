@@ -127,14 +127,7 @@ namespace Bike18YML
                 if (w.Cells[i, 10].Value != null)
                 {
                     string miniText = w.Cells[i, 10].Value.ToString();
-                    if (miniText.Contains("кредит") || miniText.Contains("bike18") || miniText.Contains("РАССРОЧКУ") || miniText.Contains("контакте") || miniText.Contains("нашу группу") || miniText.Contains("менеджерам") || miniText.Contains("Звоните") || miniText.Contains("пишите") || miniText.Contains("почту ") || miniText.Contains("moto@bike18.ru") || miniText.Contains("BIKE18") || miniText.Contains("BIKE18.RU") || miniText.Contains("Механики") || miniText.Contains("цене"))
-                    {
-                        tovar.Add("");
-                    }
-                    else
-                    {
-                        tovar.Add(w.Cells[i, 10].Value.ToString());
-                    }
+                    ReturnDescription(w, i, tovar, miniText, 10);
                 }   
                 else
                     tovar.Add("");
@@ -142,15 +135,8 @@ namespace Bike18YML
                 if (w.Cells[i, 11].Value != null)
                 {
                     string fullText = w.Cells[i, 11].Value.ToString();
-                    if (fullText.Contains("кредит") || fullText.Contains("bike18") || fullText.Contains("РАССРОЧКУ") || fullText.Contains("контакте") || fullText.Contains("нашу группу") || fullText.Contains("менеджерам") || fullText.Contains("Звоните") || fullText.Contains("пишите") || fullText.Contains("почту ") || fullText.Contains("moto@bike18.ru") || fullText.Contains("BIKE18") || fullText.Contains("BIKE18.RU") || fullText.Contains("Механики") || fullText.Contains("цене"))
-                    {
-                        tovar.Add("");
-                    }
-                    else
-                    {
-                        tovar.Add(w.Cells[i, 11].Value.ToString());
-                    }
-                }                
+                    ReturnDescription(w, i, tovar, fullText, 11);
+                }
                 else
                     tovar.Add("");
 
@@ -184,6 +170,18 @@ namespace Bike18YML
             ControlsFormEnabledFalse();
 
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
+        }
+
+        private static void ReturnDescription(ExcelWorksheet w, int i, List<string> tovar, string descriptionText, int numberColumn)
+        {
+            if (descriptionText.Contains("кредит") || descriptionText.Contains("bike18") || descriptionText.Contains("РАССРОЧКУ") || descriptionText.Contains("контакте") || descriptionText.Contains("нашу группу") || descriptionText.Contains("менеджерам") || descriptionText.Contains("Звоните") || descriptionText.Contains("пишите") || descriptionText.Contains("почту ") || descriptionText.Contains("moto@bike18.ru") || descriptionText.Contains("BIKE18") || descriptionText.Contains("BIKE18.RU") || descriptionText.Contains("Механики") || descriptionText.Contains("цене"))
+            {
+                tovar.Add("");
+            }
+            else
+            {
+                tovar.Add(w.Cells[i, numberColumn].Value.ToString());
+            }
         }
 
         private int CheckCountPosition(int countPosition)
