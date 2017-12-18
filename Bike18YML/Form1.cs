@@ -125,12 +125,18 @@ namespace Bike18YML
                     tovar.Add("");
 
                 if (w.Cells[i, 10].Value != null)
-                    tovar.Add(w.Cells[i, 10].Value.ToString());
+                {
+                    string miniText = w.Cells[i, 10].Value.ToString();
+                    ReturnDescription(w, i, tovar, miniText, 10);
+                }   
                 else
                     tovar.Add("");
 
                 if (w.Cells[i, 11].Value != null)
-                    tovar.Add(w.Cells[i, 11].Value.ToString());
+                {
+                    string fullText = w.Cells[i, 11].Value.ToString();
+                    ReturnDescription(w, i, tovar, fullText, 11);
+                }
                 else
                     tovar.Add("");
 
@@ -164,6 +170,18 @@ namespace Bike18YML
             ControlsFormEnabledFalse();
 
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
+        }
+
+        private static void ReturnDescription(ExcelWorksheet w, int i, List<string> tovar, string descriptionText, int numberColumn)
+        {
+            if (descriptionText.Contains("кредит") || descriptionText.Contains("bike18") || descriptionText.Contains("РАССРОЧКУ") || descriptionText.Contains("контакте") || descriptionText.Contains("нашу группу") || descriptionText.Contains("менеджерам") || descriptionText.Contains("Звоните") || descriptionText.Contains("пишите") || descriptionText.Contains("почту ") || descriptionText.Contains("moto@bike18.ru") || descriptionText.Contains("BIKE18") || descriptionText.Contains("BIKE18.RU") || descriptionText.Contains("Механики") || descriptionText.Contains("цене"))
+            {
+                tovar.Add("");
+            }
+            else
+            {
+                tovar.Add(w.Cells[i, numberColumn].Value.ToString());
+            }
         }
 
         private int CheckCountPosition(int countPosition)
@@ -280,13 +298,6 @@ namespace Bike18YML
                                 if (tovar[x].ToString().Contains("name-") && !tovar[x].ToString().Contains("param"))
                                     nameTovar = new XElement("name", tovar[x].ToString().Replace("name-", ""));
                             }
-
-                            /*if (oldPriceTovar == null)
-                            {
-                                nameTovar = new XElement("name", tovar[7].ToString().Replace("name-", ""));
-                            }
-                            else
-                                nameTovar = new XElement("name", tovar[8].ToString().Replace("name-", ""));*/
                         }
                         else if (category[0].ToString().Contains("description"))
                         {
@@ -495,16 +506,6 @@ namespace Bike18YML
                 {
                     if (urlTovarAttrib != "https://bike18.nethouse.ru/api/v1/catalog/attributes/0/0")
                         otv = nethouse.getRequest(cookie, urlTovarAttrib);
-                    //HttpWebResponse res = null;
-                    //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
-                    //req.Accept = "application/json, text/plain, */*";
-                    //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
-                    //req.Method = "GET";
-                    //req.CookieContainer = cookie;
-                    //res = (HttpWebResponse)req.GetResponse();
-                    //StreamReader ressr = new StreamReader(res.GetResponseStream());
-                    //otv = ressr.ReadToEnd();
-                    //res.Close();
                 }
                 catch
                 {
@@ -610,79 +611,6 @@ namespace Bike18YML
                         }
                     }
                 }
-
-                /* if (atributesTovar.Count != 0)
-                 {
-                     for (int i = atributesTovar.Count - 1; atributesTovar.Count > i; i++)
-                     {
-                         string strTovar = atributesTovar[i].ToString() + "&";
-
-                         primaryKey = new Regex("(?<=primaryKey]=).*?(?=&)").Match(strTovar).ToString();
-                         attributeId = new Regex("(?<=attributeId]=).*?(?=&)").Match(strTovar).ToString();
-                         empty = new Regex("(?<=empty]=).*?(?=&)").Match(strTovar).ToString();
-                         valueId = new Regex("(?<=valueId]=).*?(?=&)").Match(strTovar).ToString();
-                         chekbox = new Regex("(?<=checkbox]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
-
-                         if (chekbox != "")
-                         {
-                             if (chekbox == "1")
-                                 paramValue = "есть";
-                         }
-                         else
-                             paramValue = new Regex("(?<=text]=)[\\w\\W]*?(?=&)").Match(strTovar).ToString();
-
-                         foreach (Match ss in attributes2)
-                         {
-                             string str = ss.ToString();
-                             paramName = new Regex("(?<=name\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
-                             unit = new Regex("(?<=unit\": \")[\\w\\W]*?(?=\")").Match(str).ToString();
-                             if (unit == "\\")
-                                 unit = "\"";
-                             if (str.Contains(primaryKey) && primaryKey != "")
-                             {
-                                 bool b = false;
-                                 if (str.Contains("vendor"))
-                                 {
-                                     b = true;
-                                 }
-                                 if (str.Contains("options"))
-                                 {
-                                     MatchCollection options = new Regex("valueId\": [\\w\\W]*?(?=})").Matches(str);
-                                     if (options.Count == 0)
-                                     {
-                                         if (unit == "")
-                                             param.Add(paramName + ";" + paramValue);
-                                         else
-                                             param.Add(paramName + ";" + paramValue + ";" + unit);
-                                     }
-                                     else
-                                     {
-                                         foreach (Match sss in options)
-                                         {
-                                             string str2 = sss.ToString();
-                                             if (str2.Contains(valueId) && valueId != "")
-                                             {
-                                                 if (b && valueId != "")
-                                                 {
-                                                     valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
-                                                     vendor = valueText;
-                                                     param.Add("vendor;" + valueText);
-                                                     break;
-                                                 }
-                                                 else
-                                                 {
-                                                     valueText = new Regex("(?<=valueText\": \")[\\w\\W]*?(?=\")").Match(str2).ToString();
-                                                     param.Add(paramName + ";" + valueText);
-                                                     break;
-                                                 }
-                                             }
-                                         }
-                                     }
-                                 }
-                             }
-                         }
-                     }
-                 }*/
             }
 
 
@@ -825,17 +753,6 @@ namespace Bike18YML
                         urlTovarAttrib = "https://bike18.nethouse.ru/api/v1/catalog/attributes/" + group + "/" + group;
 
                     otv = nethouse.getRequest(cookie, urlTovarAttrib);
-
-                    //HttpWebResponse res = null;
-                    //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(urlTovarAttrib);
-                    //req.Accept = "application/json, text/plain, */*";
-                    //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
-                    //req.Method = "GET";
-                    //req.CookieContainer = cookie;
-                    //res = (HttpWebResponse)req.GetResponse();
-                    //StreamReader ressr = new StreamReader(res.GetResponseStream());
-                    //otv = ressr.ReadToEnd();
-                    //res.Close();
 
                     if (categories.Count == 0)
                     {
@@ -1072,17 +989,6 @@ namespace Bike18YML
             string otv = "";
 
             otv = nethouse.getRequest(cookie, "https://bike18.nethouse.ru/api/catalog/categoriesselect");
-
-            //HttpWebResponse res = null;
-            //HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create("https://bike18.nethouse.ru/api/catalog/categoriesselect");
-            //req.Accept = "application/json, text/plain, */*";
-            //req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
-            //req.Method = "GET";
-            //req.CookieContainer = cookie;
-            //res = (HttpWebResponse)req.GetResponse();
-            //StreamReader ressr = new StreamReader(res.GetResponseStream());
-            //otv = ressr.ReadToEnd();
-            //res.Close();
 
             dynamic stuff1 = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(otv);
             string ssss = stuff1.ToString();

@@ -50,3 +50,4 @@ Temporary Items
 */lib/*
 packages/Newtonsoft.Json.9.0.1/lib/*
 *.ide
+.vs/Bike18YML/v15/sqlite3/storage.ide
