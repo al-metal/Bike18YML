@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using xNet.Net;
+using System.Data.SQLite;
 
 namespace Bike18YML
 {
@@ -25,6 +26,8 @@ namespace Bike18YML
         XElement categoriesElement = new XElement("categories");
         CookieDictionary cookie;
 
+        public SQLiteConnection db;
+
         public Form1()
         {
             InitializeComponent();
@@ -34,6 +37,7 @@ namespace Bike18YML
         {
             tbLogin.Text = Properties.Settings.Default.loginBike18.ToString();
             tbPassword.Text = Properties.Settings.Default.passwordBike18.ToString();
+            db = new SQLiteConnection("Data Source=yml.db;");
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -61,6 +65,7 @@ namespace Bike18YML
         private void CreateYML()
         {
             ControlsFormEnabledFalse();
+            DialogResult dialogResult = new DialogResult();
             File.Delete("erorTovar");
 
             FileInfo file = new FileInfo("Прайс.xlsx");
@@ -68,8 +73,41 @@ namespace Bike18YML
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
             int q = w.Dimension.Rows;
+            int start = 2;
+
+            db.Open();
+            SQLiteCommand cmd = db.CreateCommand();
+            cmd.CommandText = "select str from data";
+            SQLiteDataReader SQL = cmd.ExecuteReader();
+            if (SQL.HasRows)
+            {
+                while (SQL.Read()) {
+                    string ss = SQL["str"].ToString();
+                }
+            }
+            else
+            {
+
+            }
+            db.Close();
+
+            bool fileTemp = false;
+            if (fileTemp)
+            {
+                dialogResult = MessageBox.Show("В прошлый раз программа не завершали работу,\n\r продолжить формирование файла?", "Возобновление работы", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    //allTovars = getTovars();
+                }
+            }
+            if (!fileTemp || dialogResult == DialogResult.No)
+            {
+
+                File.Delete("temp");
+            }
+
             pb.Invoke(new Action(() => pb.Maximum = q));
-            for (int i = 2; q >= i; i++)
+            for (int i = start; q >= i; i++)
             {
                 countPosition = CheckCountPosition(countPosition);
                 lblPositions.Invoke(new Action(() => lblPositions.Text = "Обработано позиций " + i + " из " + q));
@@ -128,7 +166,7 @@ namespace Bike18YML
                 {
                     string miniText = w.Cells[i, 10].Value.ToString();
                     ReturnDescription(w, i, tovar, miniText, 10);
-                }   
+                }
                 else
                     tovar.Add("");
 
@@ -168,6 +206,8 @@ namespace Bike18YML
             CreateSaveYML(allTovars);
 
             ControlsFormEnabledFalse();
+
+            File.Delete("temp");
 
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
         }
@@ -393,6 +433,12 @@ namespace Bike18YML
 
             //сохраняем документ
             xdoc.Save("bike18.xml");
+
+            db.Open();
+            SQLiteCommand cmd = db.CreateCommand();
+            cmd.CommandText = "delete from data";
+            cmd.ExecuteNonQuery();
+            db.Close();
         }
 
         private string ReturnUrlAllTovar(string url)
@@ -686,6 +732,24 @@ namespace Bike18YML
             }
             allTovars.Add(tovarAtribute);
 
+            WriteSQLite(tovarAtribute);
+        }
+
+        private void WriteSQLite(List<string> tovarAtribute)
+        {
+            string str = "";
+            for (int i = 0; tovarAtribute.Count > i; i++)
+            {
+                str += tovarAtribute[i].ToString() + "†";
+            }
+            if (str != "")
+            {
+                db.Open();
+                SQLiteCommand cmd = db.CreateCommand();
+                cmd.CommandText = "insert into data (str) values ('" + str + "')";
+                cmd.ExecuteNonQuery();
+                db.Close();
+            }
         }
 
         private void Tovar(CookieDictionary cookie, string idTovar)
@@ -1071,6 +1135,16 @@ namespace Bike18YML
             btnStart.Invoke(new Action(() => btnStart.Enabled = false));
             tbLogin.Invoke(new Action(() => tbLogin.Enabled = false));
             tbPassword.Invoke(new Action(() => tbPassword.Enabled = false));
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            db.Close();
         }
     }
 }

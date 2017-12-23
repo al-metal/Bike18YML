@@ -54,3 +54,4 @@ packages/Newtonsoft.Json.9.0.1/lib/*
 .vs/Bike18YML/v15/sqlite3/storage.ide-journal
 .vs/Bike18YML/v15/sqlite3/storage.ide
 *.ide
+packages/*
