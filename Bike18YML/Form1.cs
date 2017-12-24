@@ -79,32 +79,26 @@ namespace Bike18YML
             SQLiteCommand cmd = db.CreateCommand();
             cmd.CommandText = "select str from data";
             SQLiteDataReader SQL = cmd.ExecuteReader();
-            if (SQL.HasRows)
-            {
-                while (SQL.Read()) {
-                    string ss = SQL["str"].ToString();
-                }
-            }
-            else
-            {
-
-            }
             db.Close();
 
-            bool fileTemp = false;
-            if (fileTemp)
+            if (SQL.HasRows)
             {
+
                 dialogResult = MessageBox.Show("В прошлый раз программа не завершали работу,\n\r продолжить формирование файла?", "Возобновление работы", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    //allTovars = getTovars();
+                    //согласен на продолжение
+                    while (SQL.Read())
+                    {
+                        string ss = SQL["str"].ToString();
+                    }
+                }
+                else
+                {
+                    //очистить базу выполнение программы продолжить за блоком else
                 }
             }
-            if (!fileTemp || dialogResult == DialogResult.No)
-            {
-
-                File.Delete("temp");
-            }
+                // просто выполнять программу
 
             pb.Invoke(new Action(() => pb.Maximum = q));
             for (int i = start; q >= i; i++)
@@ -207,7 +201,11 @@ namespace Bike18YML
 
             ControlsFormEnabledFalse();
 
-            File.Delete("temp");
+            db.Open();
+            cmd = db.CreateCommand();
+            cmd.CommandText = "delete from data";
+            cmd.ExecuteNonQuery();
+            db.Close();
 
             MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
         }
@@ -433,12 +431,6 @@ namespace Bike18YML
 
             //сохраняем документ
             xdoc.Save("bike18.xml");
-
-            db.Open();
-            SQLiteCommand cmd = db.CreateCommand();
-            cmd.CommandText = "delete from data";
-            cmd.ExecuteNonQuery();
-            db.Close();
         }
 
         private string ReturnUrlAllTovar(string url)
