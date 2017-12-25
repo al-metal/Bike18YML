@@ -27,6 +27,7 @@ namespace Bike18YML
         CookieDictionary cookie;
 
         public SQLiteConnection db;
+        SQLiteCommand cmd;
 
         public Form1()
         {
@@ -75,33 +76,44 @@ namespace Bike18YML
             int q = w.Dimension.Rows;
             int start = 2;
 
+            
+
             db.Open();
-            SQLiteCommand cmd = db.CreateCommand();
+            cmd = db.CreateCommand();
             cmd.CommandText = "select str from data";
             SQLiteDataReader SQL = cmd.ExecuteReader();
-            db.Close();
+            bool isRows = SQL.HasRows;
+            //db.Close();
 
-            if (SQL.HasRows)
+
+            if (isRows)
             {
-
                 dialogResult = MessageBox.Show("В прошлый раз программа не завершали работу,\n\r продолжить формирование файла?", "Возобновление работы", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    //согласен на продолжение
+                    cmd = db.CreateCommand();
+                    cmd.CommandText = "select str from data";
+                    SQL = cmd.ExecuteReader();
+                    
                     while (SQL.Read())
                     {
-                        string ss = SQL["str"].ToString();
+                        start++;
                     }
+                    //db.Close();
                 }
                 else
                 {
-                    //очистить базу выполнение программы продолжить за блоком else
+                   
+                    cmd = db.CreateCommand();
+                    cmd.CommandText = "delete from data";
+                    cmd.ExecuteNonQuery();
+                    //db.Close();
                 }
             }
-                // просто выполнять программу
+
 
             pb.Invoke(new Action(() => pb.Maximum = q));
-            for (int i = start; q >= i; i++)
+            for (int i = 61397/*start*/; q >= i; i++)
             {
                 countPosition = CheckCountPosition(countPosition);
                 lblPositions.Invoke(new Action(() => lblPositions.Text = "Обработано позиций " + i + " из " + q));
@@ -197,17 +209,20 @@ namespace Bike18YML
                 countPosition++;
             }
 
-            CreateSaveYML(allTovars);
+            CreateSaveYML();
 
             ControlsFormEnabledFalse();
+            ClearDB();
 
-            db.Open();
+            MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
+        }
+
+        private void ClearDB()
+        {
             cmd = db.CreateCommand();
             cmd.CommandText = "delete from data";
             cmd.ExecuteNonQuery();
             db.Close();
-
-            MessageBox.Show("Добавлено товаров: " + count.ToString() + " из " + (q - 1));
         }
 
         private static void ReturnDescription(ExcelWorksheet w, int i, List<string> tovar, string descriptionText, int numberColumn)
@@ -232,8 +247,28 @@ namespace Bike18YML
             return countPosition;
         }
 
-        private void CreateSaveYML(List<List<string>> allTovars)
+        private void CreateSaveYML()
         {
+
+            List<List<string>> allTovars = new List<List<string>>();
+            
+
+            cmd = db.CreateCommand();
+            cmd.CommandText = "select * from data";
+            SQLiteDataReader SQL = cmd.ExecuteReader();
+
+            while (SQL.Read())
+            {
+                List<string> tovars = new List<string>();
+                string[] array = SQL["str"].ToString().Split('†');
+                for (int i = 0; array.Length > i; i++)
+                {
+                    tovars.Add(array[i]);
+                }
+                allTovars.Add(tovars);
+            }
+
+
 
             List<XElement> offersTovars = new List<XElement>();
             DateTime thisDate = DateTime.Now;
@@ -722,7 +757,7 @@ namespace Bike18YML
                     }
                 }
             }
-            allTovars.Add(tovarAtribute);
+           // allTovars.Add(tovarAtribute);
 
             WriteSQLite(tovarAtribute);
         }
@@ -736,11 +771,11 @@ namespace Bike18YML
             }
             if (str != "")
             {
-                db.Open();
+                
                 SQLiteCommand cmd = db.CreateCommand();
                 cmd.CommandText = "insert into data (str) values ('" + str + "')";
                 cmd.ExecuteNonQuery();
-                db.Close();
+
             }
         }
 
