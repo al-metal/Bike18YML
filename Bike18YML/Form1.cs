@@ -113,7 +113,7 @@ namespace Bike18YML
 
 
             pb.Invoke(new Action(() => pb.Maximum = q));
-            for (int i = 61397/*start*/; q >= i; i++)
+            for (int i = start; q >= i; i++)
             {
                 countPosition = CheckCountPosition(countPosition);
                 lblPositions.Invoke(new Action(() => lblPositions.Text = "Обработано позиций " + i + " из " + q));
