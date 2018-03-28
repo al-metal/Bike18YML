@@ -29,6 +29,8 @@ namespace Bike18YML
         public SQLiteConnection db;
         SQLiteCommand cmd;
 
+        string fileUrls;
+
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +50,17 @@ namespace Bike18YML
             Properties.Settings.Default.passwordBike18 = tbPassword.Text;
             Properties.Settings.Default.Save();
             #endregion
+
+            fileUrls = "";
+            ofdLoadPrice.ShowDialog();
+
+            fileUrls = ofdLoadPrice.FileName.ToString();
+
+            if (ofdLoadPrice.FileName == "openFileDialog1" || ofdLoadPrice.FileName == "")
+            {
+                MessageBox.Show("Ошибка при выборе файла", "Ошибка файла");
+                return;
+            }
 
             cookie = nethouse.CookieNethouse(tbLogin.Text, tbPassword.Text);
 
@@ -69,7 +82,7 @@ namespace Bike18YML
             DialogResult dialogResult = new DialogResult();
             File.Delete("erorTovar");
 
-            FileInfo file = new FileInfo("Прайс.xlsx");
+            FileInfo file = new FileInfo(fileUrls);
             ExcelPackage p = new ExcelPackage(file);
 
             ExcelWorksheet w = p.Workbook.Worksheets[1];
@@ -771,7 +784,7 @@ namespace Bike18YML
             }
             if (str != "")
             {
-                
+                str = str.Replace("'", "");
                 SQLiteCommand cmd = db.CreateCommand();
                 cmd.CommandText = "insert into data (str) values ('" + str + "')";
                 cmd.ExecuteNonQuery();

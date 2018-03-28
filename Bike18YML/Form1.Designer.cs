@@ -37,6 +37,7 @@
             this.lblPositions = new System.Windows.Forms.Label();
             this.tbErrUrl = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.ofdLoadPrice = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // tbLogin
@@ -101,6 +102,11 @@
             this.label1.TabIndex = 8;
             this.label1.Text = "Товары которые обработать не удалось";
             // 
+            // ofdLoadPrice
+            // 
+            this.ofdLoadPrice.FileName = "openFileDialog1";
+            this.ofdLoadPrice.Filter = "Excel|*.xlsx";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -133,6 +139,7 @@
         private System.Windows.Forms.Label lblPositions;
         private System.Windows.Forms.TextBox tbErrUrl;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.OpenFileDialog ofdLoadPrice;
     }
 }
 
